@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #F3E2C6;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.dashboard-header {
+  background-color: #8EB694;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo-img {
+  height: 40px;
+  width: auto;
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: white;
+  color: #8EB694;
+}
+
+.dashboard-content {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.score-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 40px;
+}
+
+.score-card {
+  background: white;
+  border: 2px solid #E0E0E0;
+  border-radius: 15px;
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.score-icon {
+  font-size: 24px;
+}
+
+.score-text {
+  font-weight: 600;
+  color: #333;
+  font-size: 18px;
+}
+
+.score-number {
+  font-weight: 700;
+  color: #333;
+  font-size: 24px;
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.activity-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-5px);
+}
+
+.reading2-card {
+  background: #F3E2C6;
+}
+
+.grammar2-card {
+  background: #FCE4EC;
+}
+
+.listening-card {
+  background: #F3E2C6;
+}
+
+.activity-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grammar-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.activity-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 20px 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.activity-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+  font-weight: 400;
+}
+
+.activity-button {
+  width: 100%;
+  max-width: 200px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reading-button {
+  background-color: #F8BBD9;
+  color: #333;
+}
+
+.reading-button:hover {
+  background-color: #F5A3C7;
+  transform: translateY(-2px);
+}
+
+.grammar-button {
+  background-color: #F8BBD9;
+  color: #333;
+}
+
+.grammar-button:hover {
+  background-color: #F5A3C7;
+  transform: translateY(-2px);
+}
+
+.listening-button {
+  background-color: #F8BBD9;
+  color: #333;
+}
+
+.listening-button:hover {
+  background-color: #F5A3C7;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 15px 20px;
+  }
+  
+  .header-logo-img {
+    height: 35px;
+  }
+  
+  .dashboard-content {
+    padding: 20px;
+  }
+  
+  .activities-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .activity-card {
+    padding: 30px 20px;
+  }
+  
+  .activity-title {
+    font-size: 24px;
+  }
+  
+  .score-section {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .logout-button {
+    padding: 6px 15px;
+    font-size: 14px;
+  }
+  
+  .activity-description {
+    font-size: 14px;
+  }
+}
