@@ -4,9 +4,11 @@ import './Dashboard.css';
 interface DashboardProps {
   onLogout: () => void;
   onNavigateToReading: () => void;
+  onNavigateToListening: () => void;
+  onNavigateToGrammar: () => void;
 }
 
-const Dashboard = ({ onLogout, onNavigateToReading }: DashboardProps) => {
+const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNavigateToGrammar }: DashboardProps) => {
   const handleLogout = () => {
     console.log('Logout');
     onLogout();
@@ -18,11 +20,13 @@ const Dashboard = ({ onLogout, onNavigateToReading }: DashboardProps) => {
   };
 
   const handleStartSpeaking = () => {
-    console.log('Start Speaking');
+    console.log('Start Grammar');
+    onNavigateToGrammar();
   };
 
   const handleStartListening = () => {
     console.log('Start Listening');
+    onNavigateToListening();
   };
 
   return (
@@ -63,7 +67,7 @@ const Dashboard = ({ onLogout, onNavigateToReading }: DashboardProps) => {
             </button>
           </div>
 
-          <div className="activity-card grammar-card">
+          <div className="activity-card grammar2-card">
             <div className="activity-icon">
               🗣️
             </div>
@@ -76,7 +80,7 @@ const Dashboard = ({ onLogout, onNavigateToReading }: DashboardProps) => {
             </button>
           </div>
 
-          <div className="activity-card listening-card">
+          <div className="activity-card reading2-card">
             <div className="activity-icon">
               🎧
             </div>

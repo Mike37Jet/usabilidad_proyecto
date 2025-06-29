@@ -15,6 +15,7 @@ const Reading = ({ onBack }: ReadingProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [wrongAnswer, setWrongAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
+  const [gameOver, setGameOver] = useState(false); // Nuevo estado
   const [timeRemaining, setTimeRemaining] = useState(300);
   const [totalTime] = useState(300);
 
@@ -117,6 +118,20 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
     setSelectedAnswer(null);
     setWrongAnswer(null);
     setShowResult(false);
+    setGameOver(false);
+    setTimeRemaining(totalTime);
+  };
+
+  const handleRestart = () => {
+    setIsPlaying(false);
+    setIsQuizMode(false);
+    setCurrentQuestion(0);
+    setScore(0);
+    setLives(3);
+    setSelectedAnswer(null);
+    setWrongAnswer(null);
+    setShowResult(false);
+    setGameOver(false);
     setTimeRemaining(totalTime);
   };
 
@@ -135,7 +150,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
       } else {
         // Quiz completado
         alert(`Quiz completed! Your final score: ${score}/${questions.length}`);
-        handleBackFromReading();
+        handleRestart();
       }
     } else if (isQuizMode && selectedAnswer) {
       // Verificar respuesta y mostrar resultado
@@ -145,11 +160,11 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
         setWrongAnswer(null);
       } else {
         setWrongAnswer(selectedAnswer);
-        setLives(lives - 1);
-        if (lives - 1 <= 0) {
+        const newLives = lives - 1;
+        setLives(newLives);
+        if (newLives <= 0) {
           setTimeout(() => {
-            alert('Game Over! You ran out of lives.');
-            handleBackFromReading();
+            setGameOver(true);
           }, 1500);
           return;
         }
@@ -317,6 +332,63 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
             <button onClick={handleNext} className="next-button">
               Next
             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Pantalla de Game Over
+  if (gameOver) {
+    return (
+      <div className="reading-container">
+        <header className="reading-header">
+          <div className="header-logo">
+            <img 
+              src="logo_app.svg" 
+              alt="English Club Logo" 
+              className="header-logo-img"
+            />
+          </div>
+          <h1 className="reading-title">READING</h1>
+          <div className="user-profile">
+            <div className="profile-avatar">
+              <span className="profile-icon">👤</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="reading-content">
+          <div className="quiz-header">
+            <div className="score-display">
+              <span className="score-icon">⭐</span>
+              <span className="score-text">SCORE {score}</span>
+            </div>
+            
+            <div className="question-counter">
+              <h2>Question</h2>
+              <p>{currentQuestion + 1}/5</p>
+            </div>
+            
+            <div className="lives-display">
+              {Array.from({ length: 3 }, (_, index) => (
+                <span key={index} className="heart inactive">
+                  💔
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="game-over-container">
+            <div className="game-over-modal">
+              <h2 className="game-over-title">GAME OVER</h2>
+              <p className="game-over-message">You have no lives left!</p>
+              <div className="crying-emoji">😭</div>
+              
+              <button className="restart-button" onClick={handleRestart}>
+                Start again
+              </button>
+            </div>
           </div>
         </div>
       </div>
