@@ -50,7 +50,7 @@ const Dashboard = ({ onLogout, onNavigateToReading }: DashboardProps) => {
         </div>
 
         <div className="activities-grid">
-          <div className="activity-card reading-card">
+          <div className="activity-card ">
             <div className="activity-icon">
               📖
             </div>
