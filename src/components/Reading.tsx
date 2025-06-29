@@ -360,12 +360,11 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
                   <h2>{currentContent.title}</h2>
                 </div>
                 <div className="book-illustration">
-                  <div className="ship-illustration">🚢</div>
-                  <div className="map-illustration">🗺️</div>
-                  <div className="compass-illustration">🧭</div>
-                  <div className="island-text">
-                    <p>SANDY<br/>ISLAND<br/>SOUTH<br/>PACIFIC</p>
-                  </div>
+                  <img 
+                    src="imagen_cuento.png" 
+                    alt="El misterio de la Isla Sandy" 
+                    className="story-illustration"
+                  />
                 </div>
               </div>
             </div>
