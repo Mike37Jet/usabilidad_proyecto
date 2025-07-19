@@ -497,24 +497,147 @@
   box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .answers-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .keyboard-row {
-    gap: 5px;
-  }
-  
+/* Clase para elementos solo accesibles por lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mejoras de enfoque para navegación con teclado */
+.header-logo-img:focus,
+.profile-avatar:focus,
+.score-display:focus,
+.question-info2:focus,
+.lives-display:focus {
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
+  border-radius: 4px;
+  background-color: rgba(142, 182, 148, 0.1);
+}
+
+.letter-btn:focus,
+.answer-option:focus,
+.back-button:focus,
+.next-button:focus,
+.finish-btn:focus,
+.restart-button:focus {
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
+}
+
+/* Mejoras de contraste */
+.question-text {
+  color: #222;
+}
+
+.wrong-guesses,
+.wrong-letters {
+  color: #333;
+  font-weight: 600;
+}
+
+.game-over-message {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Estados de respuestas mejorados */
+.answer-option.correct {
+  background: #2ecc71 !important;
+  color: #fff !important;
+  border-color: #27ae60 !important;
+}
+
+.answer-option.wrong {
+  background: #e74c3c !important;
+  color: #fff !important;
+  border-color: #c0392b !important;
+}
+
+/* Estados de botones deshabilitados */
+.letter-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.next-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.next-button:disabled:hover {
+  background-color: #ccc;
+  transform: none;
+}
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
   .letter-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+    border: 3px solid #000;
   }
   
-  .word-letter {
-    font-size: 2rem;
-    min-width: 40px;
+  .letter-btn.correct {
+    background: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+  }
+  
+  .letter-btn.wrong {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+  
+  .answer-option {
+    border: 3px solid #000;
+  }
+  
+  .question-text,
+  .wrong-guesses,
+  .wrong-letters {
+    color: #000;
+    font-weight: 700;
+  }
+}
+
+/* Preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .letter-btn:hover,
+  .answer-option:hover,
+  .back-button:hover,
+  .next-button:hover,
+  .finish-btn:hover,
+  .restart-button:hover {
+    transform: none;
+  }
+  
+  .crying-emoji {
+    animation: none;
+  }
+}
+
+/* Soporte para lectores de pantalla */
+@media (speech) {
+  .question-text {
+    speak: spell-out;
+  }
+  
+  .hangman-art {
+    speak: none;
   }
 }

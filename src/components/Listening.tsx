@@ -13,8 +13,9 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1);
-  const videoRef = useRef(null);
-  const timeoutRef = useRef(null);
+  const [showSubtitles, setShowSubtitles] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastMouseMoveRef = useRef(0);
 
   // Función para ocultar controles después de 3 segundos
@@ -27,13 +28,12 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
       if (isPlaying) {
         setShowControls(false);
       }
-    }, 3000); // 3 segundos
+    }, 3000);
   }, [isPlaying]);
 
   // Función mejorada para mostrar controles con throttling
   const showControlsTemporarily = () => {
     const now = Date.now();
-    // Throttle: solo procesar si han pasado más de 500ms desde el último evento
     if (now - lastMouseMoveRef.current < 500) {
       return;
     }
@@ -50,20 +50,84 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
     if (isPlaying) {
       hideControlsAfterDelay();
     } else {
-      // Mostrar controles cuando está pausado
       setShowControls(true);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     }
 
-    // Limpiar timeout al desmontar
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [isPlaying, hideControlsAfterDelay]); // Agregué hideControlsAfterDelay a las dependencias
+  }, [isPlaying, hideControlsAfterDelay]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
+  const handleVideoKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case ' ':
+      case 'k':
+        e.preventDefault();
+        handlePlayPause();
+        break;
+      case 'm':
+        e.preventDefault();
+        handleMuteToggle();
+        break;
+      case 'f':
+        e.preventDefault();
+        if (videoRef.current && document.fullscreenEnabled) {
+          if (!document.fullscreenElement) {
+            videoRef.current.requestFullscreen();
+          } else {
+            document.exitFullscreen();
+          }
+        }
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        skipTime(-10);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        skipTime(10);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        adjustVolume(0.1);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        adjustVolume(-0.1);
+        break;
+      case 's':
+        e.preventDefault();
+        setShowSubtitles(!showSubtitles);
+        break;
+    }
+  };
+
+  const skipTime = (seconds: number) => {
+    if (videoRef.current) {
+      const newTime = Math.max(0, Math.min(videoRef.current.currentTime + seconds, duration));
+      videoRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
+
+  const adjustVolume = (change: number) => {
+    if (videoRef.current) {
+      const newVolume = Math.max(0, Math.min(volume + change, 1));
+      handleVolumeChange(newVolume);
+    }
+  };
 
   const handlePlayPause = () => {
     if (videoRef.current) {
@@ -74,7 +138,7 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
         videoRef.current.play().then(() => {
           setIsPlaying(true);
         }).catch((error) => {
-          console.error('Error al reproducir video:', error);
+          console.error('Error playing video:', error);
         });
       }
     }
@@ -99,19 +163,16 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
   };
 
   const handleNext = () => {
-    // Navegar a la pantalla de niveles de listening
     onNavigateToLevels();
   };
 
   const handleMuteToggle = () => {
     if (videoRef.current) {
       if (isMuted) {
-        // Desmutear
         videoRef.current.muted = false;
         videoRef.current.volume = volume;
         setIsMuted(false);
       } else {
-        // Mutear
         videoRef.current.muted = true;
         setIsMuted(true);
       }
@@ -123,7 +184,6 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
       videoRef.current.volume = newVolume;
       setVolume(newVolume);
       
-      // Si el volumen es 0, considerar como muted
       if (newVolume === 0) {
         setIsMuted(true);
         videoRef.current.muted = true;
@@ -134,7 +194,6 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
     }
   };
 
-  // Función para manejar el click en la barra de progreso
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (videoRef.current) {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -146,43 +205,33 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
     }
   };
 
-  // Función para manejar el arrastre del handle
-  const handleProgressDrag = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (videoRef.current) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const newTime = Math.max(0, Math.min((clickX / rect.width) * duration, duration));
-      
-      videoRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-    }
-  };
-
   return (
     <div className="listening-container">
-      {/* Header siguiendo el mismo patrón que Reading */}
-      <header className="listening-header">
+      <header className="listening-header" role="banner">
         <div className="header-logo">
           <img 
             src="logo_app.svg" 
-            alt="English Club Logo" 
+            alt="English Club - Listening lesson application" 
             className="header-logo-img"
+            role="img"
+            tabIndex={0}
           />
         </div>
         <h1 className="listening-main-title">LISTENING</h1>
         <div className="user-profile">
-          <div className="profile-avatar">
-            <span className="profile-icon">👤</span>
+          <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+            <span className="profile-icon" aria-hidden="true">👤</span>
           </div>
         </div>
       </header>
 
-      {/* Contenido principal */}
-      <div className="listening-content">
-        <div className="listening-card">
-          <h2 className="lesson-title">Past Simple: How uses in FRIENDS TV Serie</h2>
+      <main className="listening-content" role="main">
+        <article className="listening-card">
+          <h2 className="lesson-title">Past Simple: How it's used in FRIENDS TV Series</h2>
           
-          <div className="video-container">
+          <section className="video-container" aria-labelledby="video-heading">
+            <h3 id="video-heading" className="sr-only">Listening lesson video</h3>
+            
             <div 
               className="video-frame"
               onMouseMove={showControlsTemporarily}
@@ -191,6 +240,8 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
                   hideControlsAfterDelay();
                 }
               }}
+              role="region"
+              aria-label="Video player"
             >
               <video 
                 ref={videoRef}
@@ -199,26 +250,81 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
                 onLoadedMetadata={handleLoadedMetadata}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
+                onKeyDown={handleVideoKeyDown}
                 controls={false}
                 onClick={showControlsTemporarily}
+                aria-label="Past Simple grammar lesson from FRIENDS TV series"
+                aria-describedby="video-description"
+                tabIndex={0}
               >
                 <source src="/serie_ingles.mp4" type="video/mp4" />
-                Tu navegador no soporta el elemento video.
+                {showSubtitles && (
+                  <track
+                    kind="subtitles"
+                    src="/subtitles_en.vtt"
+                    srcLang="en"
+                    label="English subtitles"
+                    default
+                  />
+                )}
+                <p>Your browser does not support the video element. Please use a modern browser to view this content.</p>
               </video>
 
-              {/* Controles de video */}
-              <div className={`video-controls ${showControls ? 'show' : 'hide'}`}>
-                <button className="control-btn prev-btn">⏮</button>
-                <button className="control-btn play-btn" onClick={handlePlayPause}>
+              <div id="video-description" className="sr-only">
+                This video shows examples of Past Simple tense usage from the popular TV series FRIENDS, 
+                helping you understand how this grammar structure is used in real conversations.
+              </div>
+
+              <div 
+                className={`video-controls ${showControls ? 'show' : 'hide'}`}
+                role="group"
+                aria-label="Video controls"
+              >
+                <button 
+                  className="control-btn prev-btn"
+                  onClick={() => skipTime(-10)}
+                  onKeyDown={(e) => handleKeyDown(e, () => skipTime(-10))}
+                  aria-label="Go back 10 seconds"
+                  tabIndex={0}
+                >
+                  ⏮
+                </button>
+                
+                <button 
+                  className="control-btn play-btn" 
+                  onClick={handlePlayPause}
+                  onKeyDown={(e) => handleKeyDown(e, handlePlayPause)}
+                  aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                  tabIndex={0}
+                >
                   {isPlaying ? '⏸' : '▶'}
                 </button>
-                <button className="control-btn">⏭</button>
-                <button className="control-btn volume-btn" onClick={handleMuteToggle}>
+                
+                <button 
+                  className="control-btn"
+                  onClick={() => skipTime(10)}
+                  onKeyDown={(e) => handleKeyDown(e, () => skipTime(10))}
+                  aria-label="Go forward 10 seconds"
+                  tabIndex={0}
+                >
+                  ⏭
+                </button>
+                
+                <button 
+                  className="control-btn volume-btn" 
+                  onClick={handleMuteToggle}
+                  onKeyDown={(e) => handleKeyDown(e, handleMuteToggle)}
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                  aria-pressed={isMuted}
+                  tabIndex={0}
+                >
                   {isMuted ? '🔇' : '🔊'}
                 </button>
                 
-                <div className="volume-control">
+                <div className="volume-control" role="group" aria-label="Volume control">
+                  <label htmlFor="volume-slider" className="sr-only">Volume level</label>
                   <input
+                    id="volume-slider"
                     type="range"
                     min="0"
                     max="1"
@@ -226,69 +332,95 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
                     value={isMuted ? 0 : volume}
                     onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
                     className="volume-slider"
+                    aria-label={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round((isMuted ? 0 : volume) * 100)}
+                    tabIndex={0}
                   />
                 </div>
+
+                <button
+                  className="control-btn subtitles-btn"
+                  onClick={() => setShowSubtitles(!showSubtitles)}
+                  onKeyDown={(e) => handleKeyDown(e, () => setShowSubtitles(!showSubtitles))}
+                  aria-label={showSubtitles ? 'Hide subtitles' : 'Show subtitles'}
+                  aria-pressed={showSubtitles}
+                  tabIndex={0}
+                >
+                  CC
+                </button>
                 
-                <div className="time-progress">
+                <div className="time-progress" role="group" aria-label="Video progress">
                   <div 
                     className="progress-bar"
                     onClick={handleProgressClick}
-                    onMouseMove={(e) => {
-                      if (e.buttons === 1) {
-                        handleProgressDrag(e);
+                    role="slider"
+                    aria-label="Video progress"
+                    aria-valuemin={0}
+                    aria-valuemax={Math.round(duration)}
+                    aria-valuenow={Math.round(currentTime)}
+                    aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        skipTime(-5);
+                      } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        skipTime(5);
                       }
                     }}
                   >
                     <div 
                       className="progress-fill" 
                       style={{ width: `${(currentTime / duration) * 100}%` }}
+                      aria-hidden="true"
                     ></div>
                     <div 
                       className="progress-handle"
                       style={{ left: `${(currentTime / duration) * 100}%` }}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        
-                        const handleMouseMove = (event: globalThis.MouseEvent) => {
-                          const progressBar = document.querySelector('.progress-bar') as HTMLElement;
-                          if (progressBar && videoRef.current) {
-                            const rect = progressBar.getBoundingClientRect();
-                            const clickX = event.clientX - rect.left;
-                            const newTime = Math.max(0, Math.min((clickX / rect.width) * duration, duration));
-                            videoRef.current.currentTime = newTime;
-                            setCurrentTime(newTime);
-                          }
-                        };
-                        
-                        const handleMouseUp = () => {
-                          document.removeEventListener('mousemove', handleMouseMove);
-                          document.removeEventListener('mouseup', handleMouseUp);
-                        };
-                        
-                        document.addEventListener('mousemove', handleMouseMove);
-                        document.addEventListener('mouseup', handleMouseUp);
-                      }}
+                      aria-hidden="true"
                     ></div>
                   </div>
-                  <span className="time-display">
+                  <div className="time-display" aria-live="polite" aria-label={`Current time: ${formatTime(currentTime)}, Total duration: ${formatTime(duration)}`}>
                     {formatTime(currentTime)} / {formatTime(duration)}
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Botones de navegación */}
-          <div className="navigation-buttons">
-            <button onClick={onNavigateBack} className="nav-button back-btn">
+            <div className="video-instructions" id="video-instructions">
+              <h4 className="sr-only">Video controls instructions</h4>
+              <p className="sr-only">
+                Use spacebar or K to play/pause, M to mute/unmute, S to toggle subtitles, F for fullscreen, 
+                arrow keys to navigate and adjust volume. Use Tab to navigate between controls.
+              </p>
+            </div>
+          </section>
+
+          <nav className="navigation-buttons" aria-label="Lesson navigation">
+            <button 
+              onClick={onNavigateBack} 
+              onKeyDown={(e) => handleKeyDown(e, onNavigateBack)}
+              className="nav-button back-btn"
+              aria-label="Go back to previous page"
+              tabIndex={0}
+            >
               Back
             </button>
-            <button onClick={handleNext} className="nav-button next-btn">
+            <button 
+              onClick={handleNext} 
+              onKeyDown={(e) => handleKeyDown(e, handleNext)}
+              className="nav-button next-btn"
+              aria-label="Start listening exercises"
+              tabIndex={0}
+            >
               Next
             </button>
-          </div>
-        </div>
-      </div>
+          </nav>
+        </article>
+      </main>
     </div>
   );
 };

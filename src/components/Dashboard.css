@@ -24,17 +24,22 @@
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: 2px solid white;
-  padding: 8px 20px;
+  padding: 10px 20px;
   border-radius: 25px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 44px;
+  font-size: 16px;
 }
 
-.logout-button:hover {
+.logout-button:hover,
+.logout-button:focus {
   background: white;
   color: #8EB694;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .dashboard-content {
@@ -85,15 +90,23 @@
 
 .activity-card {
   background: white;
+  border: 2px solid transparent;
   border-radius: 20px;
   padding: 40px 30px;
   text-align: center;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.activity-card:hover {
+.activity-card:hover,
+.activity-card:focus-within {
   transform: translateY(-5px);
+  border-color: #8EB694;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.reading-card3 {
+  background: #ffffff;
 }
 
 .reading2-card {
@@ -132,7 +145,7 @@
 
 .activity-description {
   font-size: 16px;
-  color: #666;
+  color: #333;
   line-height: 1.6;
   margin: 0 0 30px 0;
   font-weight: 400;
@@ -140,15 +153,16 @@
 
 .activity-button {
   width: 100%;
-  max-width: 200px;
-  padding: 12px 24px;
-  border: none;
+  max-width: 220px;
+  padding: 15px 24px;
+  border: 2px solid transparent;
   border-radius: 25px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 48px;
 }
 
 .reading-button {
@@ -156,9 +170,12 @@
   color: #333;
 }
 
-.reading-button:hover {
+.reading-button:hover,
+.reading-button:focus {
   background-color: #F5A3C7;
   transform: translateY(-2px);
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
 }
 
 .grammar-button {
@@ -166,9 +183,12 @@
   color: #333;
 }
 
-.grammar-button:hover {
+.grammar-button:hover,
+.grammar-button:focus {
   background-color: #F5A3C7;
   transform: translateY(-2px);
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
 }
 
 .listening-button {
@@ -176,9 +196,25 @@
   color: #333;
 }
 
-.listening-button:hover {
+.listening-button:hover,
+.listening-button:focus {
   background-color: #F5A3C7;
   transform: translateY(-2px);
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
+}
+
+/* Clase para elementos solo accesibles por lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Responsive Design */
@@ -215,11 +251,115 @@
 
 @media (max-width: 480px) {
   .logout-button {
-    padding: 6px 15px;
+    padding: 8px 15px;
     font-size: 14px;
+    min-height: 40px;
   }
   
   .activity-description {
     font-size: 14px;
   }
+  
+  .activity-button {
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+}
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
+  .activity-card {
+    border: 3px solid #000;
+  }
+  
+  .activity-title,
+  .activity-description {
+    color: #000;
+  }
+  
+  .activity-button {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #000;
+  }
+  
+  .logout-button {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #000;
+  }
+}
+
+/* Preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .activity-card:hover,
+  .activity-card:focus-within {
+    transform: none;
+  }
+  
+  .activity-button:hover,
+  .activity-button:focus {
+    transform: none;
+  }
+}
+
+/* Mejoras de enfoque para usuarios de teclado */
+.activity-card:focus-within {
+  outline: 2px solid #8EB694;
+  outline-offset: 4px;
+}
+
+/* Mejoras para navegación con teclado */
+.header-logo-img:focus {
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.score-card:focus {
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
+  background-color: #f9f9f9;
+}
+
+.activity-card:focus {
+  outline: 2px solid #8EB694;
+  outline-offset: 4px;
+  transform: translateY(-3px);
+  border-color: #8EB694;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.activity-button:focus {
+  outline: 2px solid #8EB694;
+  outline-offset: 2px;
+  transform: translateY(-2px);
+}
+
+/* Orden de tabulación visible */
+.dashboard-container *:focus {
+  z-index: 10;
+  position: relative;
+}
+
+/* Mejoras para alto contraste */
+@media (prefers-contrast: high) {
+  .header-logo-img:focus,
+  .score-card:focus,
+  .activity-card:focus,
+  .activity-button:focus {
+    outline: 3px solid #000;
+    outline-offset: 3px;
+  }
+}
+
+/* Soporte para lectores de pantalla */
+@media (speech) {
+  /* Screen readers will handle punctuation naturally for activity descriptions */
 }

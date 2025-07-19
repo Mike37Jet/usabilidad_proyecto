@@ -12,10 +12,10 @@ const Reading = ({ onBack }: ReadingProps) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [gameOver, setGameOver] = useState(false); // Nuevo estado
+  const [gameOver, setGameOver] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(300);
   const [totalTime] = useState(300);
 
@@ -95,7 +95,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
       }, 1000);
     } else if (timeRemaining === 0 && !isQuizMode) {
       setIsPlaying(false);
-      alert('Time is up!');
+      alert('Time is up! Please try again.');
     }
 
     return () => {
@@ -104,6 +104,13 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
       }
     };
   }, [isPlaying, isQuizMode, timeRemaining]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -193,61 +200,71 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
     const currentQ = questions[currentQuestion];
     return (
       <div className="reading-container">
-        <header className="reading-header">
+        <header className="reading-header" role="banner">
           <div className="header-logo">
             <img 
               src="logo_app.svg" 
-              alt="English Club Logo" 
+              alt="English Club - Reading exercise application" 
               className="header-logo-img"
+              role="img"
+              tabIndex={0}
             />
           </div>
           <h1 className="reading-title">READING</h1>
           <div className="user-profile">
-            <div className="profile-avatar">
-              <span className="profile-icon">👤</span>
+            <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+              <span className="profile-icon" aria-hidden="true">👤</span>
             </div>
           </div>
         </header>
 
-        <div className="quiz-content">
-          <div className="quiz-header">
-            <div className="score-display">
-              <span className="score-icon">⭐</span>
-              <span className="score-text">Score: {score}</span>
+        <main className="quiz-content" role="main">
+          <section className="quiz-header" aria-labelledby="quiz-status-heading">
+            <h2 id="quiz-status-heading" className="sr-only">Quiz status and progress</h2>
+            
+            <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
+              <span className="score-icon" aria-hidden="true" role="img">⭐</span>
+              <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
             </div>
             
-            <div className="question-counter">
-              <h2>Question</h2>
-              <p>{currentQuestion + 1}/5</p>
+            <div className="question-counter" tabIndex={0}>
+              <h3>Question</h3>
+              <p aria-label={`Question ${currentQuestion + 1} of 5`}>{currentQuestion + 1}/5</p>
             </div>
             
-            <div className="lives-display">
+            <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
               {Array.from({ length: 3 }, (_, index) => (
                 <span 
                   key={index} 
                   className={`heart ${index < lives ? 'active' : 'inactive'}`}
+                  aria-hidden="true"
+                  role="img"
                 >
-                  ❤️
+                  {index < lives ? '❤️' : '💔'}
                 </span>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="question-container">
-            <h3 className="question-text">{currentQ.question}</h3>
+          <section className="question-container" aria-labelledby="current-question">
+            <h3 id="current-question" className="question-text">{currentQ.question}</h3>
             
-            <div className="answers-grid">
+            <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
               {currentQ.options.map((option, index) => {
                 let buttonClass = 'answer-option';
+                let ariaLabel = option;
                 
                 if (showResult) {
                   if (option === currentQ.correctAnswer) {
                     buttonClass += ' correct';
+                    ariaLabel = `${option} - Correct answer`;
                   } else if (option === wrongAnswer) {
                     buttonClass += ' wrong';
+                    ariaLabel = `${option} - Incorrect answer`;
                   }
                 } else if (selectedAnswer === option) {
                   buttonClass += ' selected';
+                  ariaLabel = `${option} - Selected`;
                 }
 
                 return (
@@ -255,28 +272,42 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
                     key={index}
                     className={buttonClass}
                     onClick={() => handleAnswerSelect(option)}
+                    onKeyDown={(e) => handleKeyDown(e, () => handleAnswerSelect(option))}
                     disabled={showResult}
+                    role="radio"
+                    aria-checked={selectedAnswer === option}
+                    aria-label={ariaLabel}
+                    tabIndex={0}
                   >
                     {option}
                   </button>
                 );
               })}
             </div>
-          </div>
+          </section>
 
           <div className="quiz-buttons">
-            <button onClick={handleBackFromReading} className="back-button">
+            <button 
+              onClick={handleBackFromReading} 
+              onKeyDown={(e) => handleKeyDown(e, handleBackFromReading)}
+              className="back-button"
+              aria-label="Go back to reading selection"
+              tabIndex={0}
+            >
               Back
             </button>
             <button 
               onClick={handleNext} 
+              onKeyDown={(e) => handleKeyDown(e, handleNext)}
               className="next-button"
               disabled={!selectedAnswer && !showResult}
+              aria-label={showResult ? (currentQuestion < questions.length - 1 ? 'Go to next question' : 'Finish quiz') : 'Submit answer'}
+              tabIndex={0}
             >
-              {showResult ? (currentQuestion < questions.length - 1 ? 'Next' : 'Finish') : 'Next'}
+              {showResult ? (currentQuestion < questions.length - 1 ? 'Next' : 'Finish') : 'Submit'}
             </button>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -285,55 +316,70 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
   if (isPlaying) {
     return (
       <div className="reading-container">
-        <header className="reading-header">
+        <header className="reading-header" role="banner">
           <div className="header-logo">
             <img 
               src="logo_app.svg" 
-              alt="English Club Logo" 
+              alt="English Club - Reading exercise application" 
               className="header-logo-img"
+              role="img"
+              tabIndex={0}
             />
           </div>
           <h1 className="reading-title">READING</h1>
           <div className="user-profile">
-            <div className="profile-avatar">
-              <span className="profile-icon">👤</span>
+            <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+              <span className="profile-icon" aria-hidden="true">👤</span>
             </div>
           </div>
         </header>
 
-        <div className="reading-exercise-content">
-          <div className="timer-section">
-            <div className="timer-bar">
+        <main className="reading-exercise-content" role="main">
+          <section className="timer-section" aria-labelledby="timer-heading">
+            <h2 id="timer-heading" className="sr-only">Reading timer</h2>
+            <div className="timer-bar" role="progressbar" aria-valuenow={progressPercentage} aria-valuemin={0} aria-valuemax={100} aria-label={`Reading progress: ${Math.round(progressPercentage)}% completed`}>
               <div 
                 className="timer-progress" 
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
-            <div className="timer-display">
+            <div className="timer-display" aria-live="polite" aria-label={`Time remaining: ${formatTime(timeRemaining)}`}>
               {formatTime(timeRemaining)}
             </div>
-          </div>
+          </section>
 
-          <div className="reading-text-container">
+          <article className="reading-text-container">
             <h2 className="reading-exercise-title">{currentContent.title}</h2>
-            <div className="reading-text">
+            <div className="reading-text" role="article" tabIndex={0}>
               {currentContent.fullText.split('\n\n').map((paragraph, index) => (
                 <p key={index} className="reading-paragraph">
                   {paragraph}
                 </p>
               ))}
             </div>
-          </div>
+          </article>
 
           <div className="reading-exercise-buttons">
-            <button onClick={handleBackFromReading} className="back-button">
+            <button 
+              onClick={handleBackFromReading} 
+              onKeyDown={(e) => handleKeyDown(e, handleBackFromReading)}
+              className="back-button"
+              aria-label="Go back to reading selection"
+              tabIndex={0}
+            >
               Back
             </button>
-            <button onClick={handleNext} className="next-button">
-              Next
+            <button 
+              onClick={handleNext} 
+              onKeyDown={(e) => handleKeyDown(e, handleNext)}
+              className="next-button"
+              aria-label="Continue to quiz questions"
+              tabIndex={0}
+            >
+              Start Quiz
             </button>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -342,55 +388,66 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
   if (gameOver) {
     return (
       <div className="reading-container">
-        <header className="reading-header">
+        <header className="reading-header" role="banner">
           <div className="header-logo">
             <img 
               src="logo_app.svg" 
-              alt="English Club Logo" 
+              alt="English Club - Reading exercise application" 
               className="header-logo-img"
+              role="img"
+              tabIndex={0}
             />
           </div>
           <h1 className="reading-title">READING</h1>
           <div className="user-profile">
-            <div className="profile-avatar">
-              <span className="profile-icon">👤</span>
+            <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+              <span className="profile-icon" aria-hidden="true">👤</span>
             </div>
           </div>
         </header>
 
-        <div className="reading-content">
-          <div className="quiz-header">
-            <div className="score-display">
-              <span className="score-icon">⭐</span>
-              <span className="score-text">SCORE {score}</span>
+        <main className="reading-content" role="main">
+          <section className="quiz-header" aria-labelledby="final-status-heading">
+            <h2 id="final-status-heading" className="sr-only">Final quiz results</h2>
+            
+            <div className="score-display" role="status" aria-live="polite">
+              <span className="score-icon" aria-hidden="true">⭐</span>
+              <span className="score-text" aria-label={`Final score: ${score} points`}>SCORE {score}</span>
             </div>
             
             <div className="question-counter">
-              <h2>Question</h2>
+              <h3>Question</h3>
               <p>{currentQuestion + 1}/5</p>
             </div>
             
-            <div className="lives-display">
+            <div className="lives-display" role="status" aria-label="No lives remaining">
               {Array.from({ length: 3 }, (_, index) => (
-                <span key={index} className="heart inactive">
+                <span key={index} className="heart inactive" aria-hidden="true" role="img">
                   💔
                 </span>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="game-over-container">
+          <section className="game-over-container" role="dialog" aria-labelledby="game-over-title" aria-describedby="game-over-message">
             <div className="game-over-modal">
-              <h2 className="game-over-title">GAME OVER</h2>
-              <p className="game-over-message">You have no lives left!</p>
-              <div className="crying-emoji">😭</div>
+              <h2 id="game-over-title" className="game-over-title">GAME OVER</h2>
+              <p id="game-over-message" className="game-over-message">You have no lives left!</p>
+              <div className="crying-emoji" aria-hidden="true" role="img">😭</div>
               
-              <button className="restart-button" onClick={handleRestart}>
-                Start again
+              <button 
+                className="restart-button" 
+                onClick={handleRestart}
+                onKeyDown={(e) => handleKeyDown(e, handleRestart)}
+                aria-label="Restart the reading exercise"
+                tabIndex={0}
+                autoFocus
+              >
+                Start Again
               </button>
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
       </div>
     );
   }
@@ -398,43 +455,57 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
   // Pantalla de selección original
   return (
     <div className="reading-container">
-      <header className="reading-header">
+      <header className="reading-header" role="banner">
         <div className="header-logo">
           <img 
             src="logo_app.svg" 
-            alt="English Club Logo" 
+            alt="English Club - Reading exercise application" 
             className="header-logo-img"
+            role="img"
+            tabIndex={0}
           />
         </div>
         <h1 className="reading-title">READING</h1>
         <div className="user-profile">
-          <div className="profile-avatar">
-            <span className="profile-icon">👤</span>
+          <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+            <span className="profile-icon" aria-hidden="true">👤</span>
           </div>
         </div>
       </header>
 
-      <div className="reading-content">
-        <div className="reading-card">
-          <div className="navigation-arrows">
-            <button onClick={() => setCurrentSlide(currentSlide > 0 ? currentSlide - 1 : readingContent.length - 1)} className="nav-arrow left-arrow">
+      <main className="reading-content" role="main">
+        <article className="reading-card">
+          <nav className="navigation-arrows" aria-label="Story navigation">
+            <button 
+              onClick={() => setCurrentSlide(currentSlide > 0 ? currentSlide - 1 : readingContent.length - 1)} 
+              onKeyDown={(e) => handleKeyDown(e, () => setCurrentSlide(currentSlide > 0 ? currentSlide - 1 : readingContent.length - 1))}
+              className="nav-arrow left-arrow"
+              aria-label="Previous story"
+              tabIndex={0}
+            >
               ❮
             </button>
-            <button onClick={() => setCurrentSlide(currentSlide < readingContent.length - 1 ? currentSlide + 1 : 0)} className="nav-arrow right-arrow">
+            <button 
+              onClick={() => setCurrentSlide(currentSlide < readingContent.length - 1 ? currentSlide + 1 : 0)} 
+              onKeyDown={(e) => handleKeyDown(e, () => setCurrentSlide(currentSlide < readingContent.length - 1 ? currentSlide + 1 : 0))}
+              className="nav-arrow right-arrow"
+              aria-label="Next story"
+              tabIndex={0}
+            >
               ❯
             </button>
-          </div>
+          </nav>
 
-          <div className="content-area">
+          <section className="content-area">
             <div className="book-cover">
-              <div className="book-image">
-                <div className="book-title-overlay">
+              <div className="book-image" role="img" aria-labelledby="book-title-overlay">
+                <div id="book-title-overlay" className="book-title-overlay">
                   <h2>{currentContent.title}</h2>
                 </div>
                 <div className="book-illustration">
                   <img 
                     src="imagen_cuento.png" 
-                    alt="El misterio de la Isla Sandy" 
+                    alt="Illustration of Sandy Island mystery - A mysterious island that appeared on maps but didn't exist" 
                     className="story-illustration"
                   />
                 </div>
@@ -442,43 +513,60 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
             </div>
 
             <div className="content-description">
-              <p className="description-text">
+              <p className="description-text" tabIndex={0}>
                 {currentContent.description}
               </p>
               
               <div className="tags-section">
-                <h3>Tags:</h3>
-                <div className="tags-container">
+                <h3>Learning Topics:</h3>
+                <div className="tags-container" role="list" aria-label="Story topics">
                   {currentContent.tags.map((tag, index) => (
-                    <span key={index} className="tag">
+                    <span key={index} className="tag" role="listitem">
                       {tag}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="slide-indicators">
+          <nav className="slide-indicators" role="tablist" aria-label="Story selection">
             {readingContent.map((_, index) => (
               <button
                 key={index}
                 className={`slide-dot ${index === currentSlide ? 'active' : ''}`}
                 onClick={() => setCurrentSlide(index)}
+                onKeyDown={(e) => handleKeyDown(e, () => setCurrentSlide(index))}
+                role="tab"
+                aria-selected={index === currentSlide}
+                aria-label={`Story ${index + 1}`}
+                tabIndex={0}
               />
             ))}
-          </div>
+          </nav>
 
           <div className="action-buttons">
-            <button onClick={onBack} className="back-button">
+            <button 
+              onClick={onBack} 
+              onKeyDown={(e) => handleKeyDown(e, onBack)}
+              className="back-button"
+              aria-label="Go back to main dashboard"
+              tabIndex={0}
+            >
               Back
             </button>
-            <button onClick={handlePlay} className="play-button">
-              Play
+            <button 
+              onClick={handlePlay} 
+              onKeyDown={(e) => handleKeyDown(e, handlePlay)}
+              className="play-button"
+              aria-label="Start reading exercise"
+              tabIndex={0}
+            >
+              Start Reading
             </button>
           </div>
-        </div>
-      </div>
+        </article>
+      </main>
     </div>
   );
 };

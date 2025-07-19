@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './GrammarGame.css';
 
 interface GrammarGameProps {
@@ -13,20 +13,21 @@ interface Question {
   options: string[];
   correctAnswer: number;
   type: 'multiple-choice' | 'hangman';
-  word?: string; // Para el juego del ahorcado
+  word?: string;
 }
 
 const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [lives, setLives] = useState(3);
   const [gameCompleted, setGameCompleted] = useState(false);
-  const [gameOver, setGameOver] = useState(false); // Nuevo estado para Game Over
+  const [gameOver, setGameOver] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   
   // Preguntas para el juego del ahorcado y múltiple opción
-  const [guessedLetters, setGuessedLetters] = useState([]);
-  const [selectedLetters, setSelectedLetters] = useState([]);
+  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+  const [selectedLetters, setSelectedLetters] = useState<string[]>([]);
 
   const getCurrentHangmanWord = () => {
     return currentQ.word || 'SPELL';
@@ -42,7 +43,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
     },
     {
       id: 2,
-      question: "Complete the word: F I N I S H E D",
+      question: "",
       options: [],
       correctAnswer: 0,
       type: 'hangman',
@@ -62,7 +63,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
     },
     {
       id: 4,
-      question: "Complete the word: C O M P L E T E D",
+      question: "",
       options: [],
       correctAnswer: 0,
       type: 'hangman',
@@ -90,8 +91,15 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
 
   const currentQ = questions[currentQuestion];
 
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   const handleAnswerSelect = (answerIndex: number) => {
-    if (currentQ.type === 'multiple-choice') {
+    if (currentQ.type === 'multiple-choice' && !showResult) {
       setSelectedAnswer(answerIndex);
     }
   };
@@ -109,19 +117,17 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
         // Verificar si la palabra está completa
         const wordComplete = currentWord.split('').every(l => newGuessedLetters.includes(l));
         if (wordComplete) {
-          // Palabra completada, avanzar automáticamente después de un breve delay
+          setScore(score + 1);
           setTimeout(() => {
             handleNext();
           }, 1500);
         }
       } else {
         // Letra incorrecta
-        const wrongGuesses = newSelectedLetters.filter(l => !currentWord.includes(l)).length;
         const newLives = lives - 1;
         setLives(newLives);
         
-        if (wrongGuesses >= 6 || newLives <= 0) {
-          // Game over por demasiados errores o sin vidas
+        if (newLives <= 0) {
           setTimeout(() => {
             setGameOver(true);
           }, 1500);
@@ -131,37 +137,35 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
   };
 
   const handleNext = () => {
-    let correct = false;
-
-    if (currentQ.type === 'multiple-choice') {
-      correct = selectedAnswer === currentQ.correctAnswer;
-      if (!correct) {
+    if (currentQ.type === 'multiple-choice' && !showResult) {
+      const correct = selectedAnswer === currentQ.correctAnswer;
+      setShowResult(true);
+      
+      if (correct) {
+        setScore(score + 1);
+      } else {
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
-          setGameOver(true);
+          setTimeout(() => {
+            setGameOver(true);
+          }, 1500);
           return;
         }
       }
-    } else if (currentQ.type === 'hangman') {
-      // Verificar si la palabra está completa
-      const currentWord = getCurrentHangmanWord();
-      const wordComplete = currentWord.split('').every(letter => guessedLetters.includes(letter));
-      correct = wordComplete;
+      return;
     }
 
-    if (correct) {
-      setScore(score + 1);
-    }
-
+    // Avanzar a la siguiente pregunta
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
+      setShowResult(false);
       setGuessedLetters([]);
       setSelectedLetters([]);
     } else {
       setGameCompleted(true);
-      onComplete(score + (correct ? 1 : 0));
+      onComplete(score);
     }
   };
 
@@ -172,6 +176,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
     setLives(3);
     setGameCompleted(false);
     setGameOver(false);
+    setShowResult(false);
     setGuessedLetters([]);
     setSelectedLetters([]);
   };
@@ -180,67 +185,78 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
   if (gameOver) {
     return (
       <div className="grammar-game-container">
-        <header className="grammar-game-header">
+        <header className="grammar-game-header" role="banner">
           <div className="header-logo">
             <img 
               src="logo_app.svg" 
-              alt="English Club Logo" 
+              alt="English Club - Grammar game application" 
               className="header-logo-img"
+              role="img"
+              tabIndex={0}
             />
           </div>
           <h1 className="grammar-game-title">GRAMMAR</h1>
           <div className="user-profile">
-            <div className="profile-avatar">
-              <span className="profile-icon">👤</span>
+            <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+              <span className="profile-icon" aria-hidden="true">👤</span>
             </div>
           </div>
         </header>
 
-        <div className="grammar-game-content">
-          <div className="game-stats">
-            <div className="score-display">
-              <span className="star-icon">⭐</span>
-              <span className="score-text">SCORE {score}</span>
+        <main className="grammar-game-content" role="main">
+          <section className="game-stats" aria-labelledby="final-stats-heading">
+            <h2 id="final-stats-heading" className="sr-only">Final game statistics</h2>
+            
+            <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
+              <span className="star-icon" aria-hidden="true" role="img">⭐</span>
+              <span className="score-text" aria-label={`Final score: ${score} points`}>SCORE {score}</span>
             </div>
             
-            <div className="question-info2">
-              <h2>Level</h2>
-              <p>{currentQuestion + 1}/{questions.length}</p>
+            <div className="question-info2" tabIndex={0}>
+              <h3>Level</h3>
+              <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
             </div>
 
-            <div className="lives-display">
+            <div className="lives-display" role="status" aria-label="No lives remaining" tabIndex={0}>
               {[...Array(3)].map((_, index) => (
-                <span key={index} className="heart inactive">
+                <span key={index} className="heart inactive" aria-hidden="true" role="img">
                   💔
                 </span>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="game-over-container">
+          <section className="game-over-container" role="dialog" aria-labelledby="game-over-title" aria-describedby="game-over-message">
             <div className="game-over-modal">
-              <h2 className="game-over-title">GAME OVER</h2>
-              <p className="game-over-message">You have no lives left!</p>
+              <h2 id="game-over-title" className="game-over-title">GAME OVER</h2>
+              <p id="game-over-message" className="game-over-message">You have no lives left!</p>
               
               {currentQ.type === 'hangman' && (
                 <div className="game-over-hangman">
-                  <div className="game-over-word">
+                  <div className="game-over-word" aria-label={`The correct word was: ${getCurrentHangmanWord()}`}>
                     {getCurrentHangmanWord().split('').map((letter, index) => (
                       <span key={index} className="word-letter revealed">
                         {letter}
                       </span>
                     ))}
                   </div>
-                  <div className="crying-emoji">😭</div>
+                  <div className="crying-emoji" aria-hidden="true" role="img">😭</div>
                 </div>
               )}
               
-              <button className="restart-button" onClick={handleRestart}>
+              <button 
+                className="restart-button" 
+                onClick={handleRestart}
+                onKeyDown={(e) => handleKeyDown(e, handleRestart)}
+                aria-label="Restart the grammar game"
+                tabIndex={0}
+                autoFocus
+              >
                 Start again
               </button>
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
       </div>
     );
   }
@@ -248,7 +264,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
   const renderWord = () => {
     const currentWord = getCurrentHangmanWord();
     return currentWord.split('').map((letter, index) => (
-      <span key={index} className="word-letter">
+      <span key={index} className="word-letter" aria-label={guessedLetters.includes(letter) ? letter : 'blank'}>
         {guessedLetters.includes(letter) ? letter : '_'}
       </span>
     ));
@@ -259,80 +275,37 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
     const wrongGuesses = selectedLetters.filter(letter => !currentWord.includes(letter)).length;
     
     const hangmanStages = [
-      // 0 errores - Solo la horca
-      `
-   ┌───┐
-   │   │
-       │
-       │
-       │
-       │
-  ═════════`,
-      // 1 error - Cabeza
-      `
-   ┌───┐
-   │   │
-   😵  │
-       │
-       │
-       │
-  ═════════`,
-      // 2 errores - Cuerpo
-      `
-   ┌───┐
-   │   │
-   😵  │
-   │   │
-       │
-       │
-  ═════════`,
-      // 3 errores - Brazo izquierdo
-      `
-   ┌───┐
-   │   │
-   😵  │
-  ╱│   │
-       │
-       │
-  ═════════`,
-      // 4 errores - Brazo derecho
-      `
-   ┌───┐
-   │   │
-   😵  │
-  ╱│╲  │
-       │
-       │
-  ═════════`,
-      // 5 errores - Pierna izquierda
-      `
-   ┌───┐
-   │   │
-   😵  │
-  ╱│╲  │
-  ╱    │
-       │
-  ═════════`,
-      // 6 errores - Pierna derecha (muerto)
-      `
-   ┌───┐
-   │   │
-   💀  │
-  ╱│╲  │
-  ╱ ╲  │
-       │
-  ═════════`
+      "Gallows only",
+      "Head added",
+      "Body added", 
+      "Left arm added",
+      "Right arm added",
+      "Left leg added",
+      "Complete figure - Game Over"
+    ];
+
+    const hangmanArt = [
+      `   ┌───┐\n   │   │\n       │\n       │\n       │\n       │\n  ═════════`,
+      `   ┌───┐\n   │   │\n   😵  │\n       │\n       │\n       │\n  ═════════`,
+      `   ┌───┐\n   │   │\n   😵  │\n   │   │\n       │\n       │\n  ═════════`,
+      `   ┌───┐\n   │   │\n   😵  │\n  ╱│   │\n       │\n       │\n  ═════════`,
+      `   ┌───┐\n   │   │\n   😵  │\n  ╱│╲  │\n       │\n       │\n  ═════════`,
+      `   ┌───┐\n   │   │\n   😵  │\n  ╱│╲  │\n  ╱    │\n       │\n  ═════════`,
+      `   ┌───┐\n   │   │\n   💀  │\n  ╱│╲  │\n  ╱ ╲  │\n       │\n  ═════════`
     ];
 
     return (
-      <div className="hangman-display">
-        <pre className="hangman-art">
-          {hangmanStages[Math.min(wrongGuesses, 6)]}
+      <div className="hangman-display" role="img" aria-labelledby="hangman-description">
+        <div id="hangman-description" className="sr-only">
+          Hangman drawing: {hangmanStages[Math.min(wrongGuesses, 6)]}
+        </div>
+        <pre className="hangman-art" aria-hidden="true">
+          {hangmanArt[Math.min(wrongGuesses, 6)]}
         </pre>
         <div className="hangman-info">
-          <p className="wrong-guesses">Wrong guesses: {wrongGuesses}/6</p>
+          <p className="wrong-guesses" aria-live="polite">Wrong guesses: {wrongGuesses}/6</p>
           {wrongGuesses > 0 && (
-            <p className="wrong-letters">
+            <p className="wrong-letters" aria-live="polite">
               Wrong letters: {selectedLetters.filter(letter => !currentWord.includes(letter)).join(', ')}
             </p>
           )}
@@ -343,123 +316,198 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
 
   return (
     <div className="grammar-game-container">
-      <header className="grammar-game-header">
+      <header className="grammar-game-header" role="banner">
         <div className="header-logo">
           <img 
             src="logo_app.svg" 
-            alt="English Club Logo" 
+            alt="English Club - Grammar game application" 
             className="header-logo-img"
+            role="img"
+            tabIndex={0}
           />
         </div>
         <h1 className="grammar-game-title">GRAMMAR</h1>
         <div className="user-profile">
-          <div className="profile-avatar">
-            <span className="profile-icon">👤</span>
+          <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+            <span className="profile-icon" aria-hidden="true">👤</span>
           </div>
         </div>
       </header>
 
-      <div className="grammar-game-content">
-        <div className="game-stats">
-          <div className="score-display">
-            <span className="star-icon">⭐</span>
-            <span className="score-text">Score: {score}</span>
+      <main className="grammar-game-content" role="main">
+        <section className="game-stats" aria-labelledby="game-stats-heading">
+          <h2 id="game-stats-heading" className="sr-only">Current game statistics</h2>
+          
+          <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
+            <span className="star-icon" aria-hidden="true" role="img">⭐</span>
+            <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
           </div>
           
-          <div className="question-info2">
-            <h2>{currentQ.type === 'hangman' ? 'Level' : 'Question'}</h2>
-            <p>{currentQuestion + 1}/{questions.length}</p>
+          <div className="question-info2" tabIndex={0}>
+            <h3>{currentQ.type === 'hangman' ? 'Level' : 'Question'}</h3>
+            <p aria-label={`${currentQ.type === 'hangman' ? 'Level' : 'Question'} ${currentQuestion + 1} of ${questions.length}`}>
+              {currentQuestion + 1}/{questions.length}
+            </p>
           </div>
 
-          <div className="lives-display">
+          <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
             {[...Array(3)].map((_, index) => (
               <span 
                 key={index} 
                 className={`heart ${index < lives ? 'active' : 'inactive'}`}
+                aria-hidden="true"
+                role="img"
               >
-                ❤️
+                {index < lives ? '❤️' : '💔'}
               </span>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="question-container2">
+        <section className="question-container2" aria-labelledby="current-question-heading">
+          <h2 id="current-question-heading" className="sr-only">
+            {currentQ.type === 'hangman' ? 'Word guessing game' : 'Multiple choice question'}
+          </h2>
+          
           {currentQ.type === 'hangman' ? (
             <div className="hangman-game">
+              {/* Eliminar la línea que mostraba currentQ.question */}
+              
               {renderHangman()}
-              <div className="word-display">
+              
+              <div className="word-display" role="group" aria-labelledby="word-progress" aria-describedby="hangman-instruction">
+                <div id="word-progress" className="sr-only">
+                  Word progress: {getCurrentHangmanWord().split('').map(letter => 
+                    guessedLetters.includes(letter) ? letter : 'blank'
+                  ).join(' ')}
+                </div>
+                <div id="hangman-instruction" className="sr-only">
+                  Guess the letters to complete the word: {getCurrentHangmanWord()}
+                </div>
                 {renderWord()}
               </div>
               
-              <div className="keyboard">
+              <div className="keyboard" role="group" aria-label="Letter selection keyboard">
                 {alphabet.map((row, rowIndex) => (
                   <div key={rowIndex} className="keyboard-row">
-                    {row.map((letter) => (
-                      <button
-                        key={letter}
-                        className={`letter-btn ${
-                          selectedLetters.includes(letter) 
-                            ? getCurrentHangmanWord().includes(letter) 
-                              ? 'correct' 
-                              : 'wrong'
-                            : ''
-                        }`}
-                        onClick={() => handleLetterSelect(letter)}
-                        disabled={selectedLetters.includes(letter)}
-                      >
-                        {letter}
-                      </button>
-                    ))}
+                    {row.map((letter) => {
+                      const isSelected = selectedLetters.includes(letter);
+                      const isCorrect = getCurrentHangmanWord().includes(letter);
+                      let ariaLabel = `Letter ${letter}`;
+                      
+                      if (isSelected) {
+                        ariaLabel += isCorrect ? ' - correct' : ' - incorrect';
+                      }
+
+                      return (
+                        <button
+                          key={letter}
+                          className={`letter-btn ${
+                            isSelected 
+                              ? isCorrect 
+                                ? 'correct' 
+                                : 'wrong'
+                              : ''
+                          }`}
+                          onClick={() => handleLetterSelect(letter)}
+                          onKeyDown={(e) => handleKeyDown(e, () => handleLetterSelect(letter))}
+                          disabled={isSelected}
+                          aria-label={ariaLabel}
+                          tabIndex={0}
+                        >
+                          {letter}
+                        </button>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
 
-              <button className="finish-btn" onClick={handleNext}>
+              <button 
+                className="finish-btn" 
+                onClick={handleNext}
+                onKeyDown={(e) => handleKeyDown(e, handleNext)}
+                aria-label="Finish this level and continue"
+                tabIndex={0}
+              >
                 Finish
               </button>
             </div>
           ) : (
             <div className="multiple-choice-game">
               <div className="question-header">
-                <h2 className="question-counter">Question {currentQuestion + 1}/{questions.length}</h2>
+                <h3 className="question-counter">Question {currentQuestion + 1}/{questions.length}</h3>
               </div>
 
               <div className="question-content">
-                <div className="question-text">
+                <div className="question-text" id="current-question">
                   {currentQ.question}
                 </div>
 
-                <div className="answers-grid">
-                  {currentQ.options.map((option, index) => (
-                    <button
-                      key={index}
-                      className={`answer-option ${selectedAnswer === index ? 'selected' : ''}`}
-                      onClick={() => handleAnswerSelect(index)}
-                    >
-                      {option}
-                    </button>
-                  ))}
+                <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
+                  {currentQ.options.map((option, index) => {
+                    let buttonClass = 'answer-option';
+                    let ariaLabel = option;
+                    
+                    if (showResult) {
+                      if (index === currentQ.correctAnswer) {
+                        buttonClass += ' correct';
+                        ariaLabel = `${option} - Correct answer`;
+                      } else if (selectedAnswer === index) {
+                        buttonClass += ' wrong';
+                        ariaLabel = `${option} - Incorrect answer`;
+                      }
+                    } else if (selectedAnswer === index) {
+                      buttonClass += ' selected';
+                      ariaLabel = `${option} - Selected`;
+                    }
+
+                    return (
+                      <button
+                        key={index}
+                        className={buttonClass}
+                        onClick={() => handleAnswerSelect(index)}
+                        onKeyDown={(e) => handleKeyDown(e, () => handleAnswerSelect(index))}
+                        disabled={showResult}
+                        role="radio"
+                        aria-checked={selectedAnswer === index}
+                        aria-label={ariaLabel}
+                        tabIndex={0}
+                      >
+                        {option}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           )}
-        </div>
+        </section>
 
-        <div className="game-buttons">
-          <button onClick={onBack} className="back-button">
+        <nav className="game-buttons" aria-label="Game navigation">
+          <button 
+            onClick={onBack} 
+            onKeyDown={(e) => handleKeyDown(e, onBack)}
+            className="back-button"
+            aria-label="Go back to previous page"
+            tabIndex={0}
+          >
             Back
           </button>
           {currentQ.type === 'multiple-choice' && (
             <button 
               onClick={handleNext} 
+              onKeyDown={(e) => handleKeyDown(e, handleNext)}
               className="next-button"
-              disabled={selectedAnswer === null}
+              disabled={selectedAnswer === null && !showResult}
+              aria-label={showResult ? 'Go to next question' : 'Submit answer'}
+              tabIndex={0}
             >
-              Next
+              {showResult ? 'Next' : 'Submit'}
             </button>
           )}
-        </div>
-      </div>
+        </nav>
+      </main>
     </div>
   );
 };

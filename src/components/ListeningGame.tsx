@@ -21,38 +21,37 @@ const ListeningGame = ({
     const savedLives = localStorage.getItem('listeningLives');
     return savedLives ? parseInt(savedLives) : 3;
   });
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [gameOver, setGameOver] = useState(false); // Nuevo estado
+  const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const audioRef = useRef(null);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Guardar en localStorage cuando cambien score o lives
   useEffect(() => {
     localStorage.setItem('listeningScore', score.toString());
-    // Disparar evento personalizado
     window.dispatchEvent(new CustomEvent('listeningScoreChanged', { detail: score }));
   }, [score]);
 
   useEffect(() => {
     localStorage.setItem('listeningLives', lives.toString());
-    // Disparar evento personalizado
     window.dispatchEvent(new CustomEvent('listeningLivesChanged', { detail: lives }));
   }, [lives]);
 
-  // Preguntas por nivel (ejemplo para nivel 1)
+  // Preguntas por nivel
   const questions = [
     {
-      question: "Fred mentions that going to bed is fine but going out to party is fine too, which verb phrase do I use to express this doubt?",
-      audioSrc: "audio_level1_q1.mp3", // Ruta del audio
+      question: "Fred mentions that going to bed is fine but going out to party is fine too, which verb phrase does he use to express this idea?",
+      audioSrc: "audio_level1_q1.mp3",
       options: [
         "to be great in bed",
-        "stay confort",
+        "stay comfortable", 
         "to be patient"
       ],
-      correctAnswer: "stay confort"
+      correctAnswer: "stay comfortable"
     },
     {
       question: "What does Sarah suggest for dealing with stress?",
@@ -103,14 +102,89 @@ const ListeningGame = ({
   const currentQ = questions[currentQuestion];
 
   useEffect(() => {
-    // Cargar audio cuando cambie la pregunta
     if (audioRef.current) {
       audioRef.current.load();
+      setCurrentTime(0);
+      setIsPlaying(false);
     }
   }, [currentQuestion]);
 
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
 
+  const handleAudioKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case ' ':
+      case 'k':
+        e.preventDefault();
+        handlePlayPause();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        skipTime(-5);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        skipTime(5);
+        break;
+    }
+  };
 
+  const skipTime = (seconds: number) => {
+    if (audioRef.current) {
+      const newTime = Math.max(0, Math.min(audioRef.current.currentTime + seconds, duration));
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
+
+  const handlePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch((error) => {
+          console.error('Error playing audio:', error);
+        });
+      }
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (audioRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const newTime = (clickX / rect.width) * duration;
+      
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
 
   const handleAnswerSelect = (answer: string) => {
     if (!showResult) {
@@ -134,7 +208,6 @@ const ListeningGame = ({
 
   const handleNext = () => {
     if (showResult) {
-      // Avanzar a la siguiente pregunta después de mostrar el resultado
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setSelectedAnswer(null);
@@ -143,13 +216,11 @@ const ListeningGame = ({
         setIsPlaying(false);
         setCurrentTime(0);
       } else {
-        // Quiz completado - limpiar localStorage solo al completar
         localStorage.removeItem('listeningScore');
         localStorage.removeItem('listeningLives');
         onComplete(score);
       }
     } else if (selectedAnswer) {
-      // Verificar respuesta y mostrar resultado
       if (selectedAnswer === currentQ.correctAnswer) {
         setScore(score + 1);
         setWrongAnswer(null);
@@ -172,120 +243,141 @@ const ListeningGame = ({
   if (gameOver) {
     return (
       <div className="listening-game-container">
-        <header className="listening-game-header">
+        <header className="listening-game-header" role="banner">
           <div className="header-logo">
             <img 
               src="logo_app.svg" 
-              alt="English Club Logo" 
+              alt="English Club - Listening game application" 
               className="header-logo-img"
+              role="img"
+              tabIndex={0}
             />
           </div>
           <h1 className="listening-game-title">LISTENING</h1>
           <div className="user-profile">
-            <div className="profile-avatar">
-              <span className="profile-icon">👤</span>
+            <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+              <span className="profile-icon" aria-hidden="true">👤</span>
             </div>
           </div>
         </header>
 
-        <div className="listening-game-content">
-          <div className="game-stats">
-            <div className="score-display">
-              <span className="score-icon">⭐</span>
-              <span className="score-text">SCORE {score}</span>
+        <main className="listening-game-content" role="main">
+          <section className="game-stats" aria-labelledby="final-stats-heading">
+            <h2 id="final-stats-heading" className="sr-only">Final game statistics</h2>
+            
+            <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
+              <span className="score-icon" aria-hidden="true" role="img">⭐</span>
+              <span className="score-text" aria-label={`Final score: ${score} points`}>SCORE {score}</span>
             </div>
             
-            <div className="question-counter">
-              <h2>Question</h2>
-              <p>{currentQuestion + 1}/6</p>
+            <div className="question-counter" tabIndex={0}>
+              <h3>Question</h3>
+              <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
             </div>
             
-            <div className="lives-display">
+            <div className="lives-display" role="status" aria-label="No lives remaining" tabIndex={0}>
               {Array.from({ length: 3 }, (_, index) => (
-                <span key={index} className="heart inactive">
+                <span key={index} className="heart inactive" aria-hidden="true" role="img">
                   💔
                 </span>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="game-over-container">
+          <section className="game-over-container" role="dialog" aria-labelledby="game-over-title" aria-describedby="game-over-message">
             <div className="game-over-modal">
-              <h2 className="game-over-title">GAME OVER</h2>
-              <p className="game-over-message">You have no lives left!</p>
-              <div className="crying-emoji">😭</div>
+              <h2 id="game-over-title" className="game-over-title">GAME OVER</h2>
+              <p id="game-over-message" className="game-over-message">You have no lives left!</p>
+              <div className="crying-emoji" aria-hidden="true" role="img">😭</div>
               
-              <button className="restart-button" onClick={handleRestart}>
+              <button 
+                className="restart-button" 
+                onClick={handleRestart}
+                onKeyDown={(e) => handleKeyDown(e, handleRestart)}
+                aria-label="Restart the listening game"
+                tabIndex={0}
+                autoFocus
+              >
                 Start again
               </button>
             </div>
-          </div>
-        </div>
+          </section>
+        </main>
       </div>
     );
   }
 
   return (
     <div className="listening-game-container">
-      <header className="listening-game-header">
+      <header className="listening-game-header" role="banner">
         <div className="header-logo">
           <img 
             src="logo_app.svg" 
-            alt="English Club Logo" 
+            alt="English Club - Listening game application" 
             className="header-logo-img"
+            role="img"
+            tabIndex={0}
           />
         </div>
         <h1 className="listening-game-title">LISTENING</h1>
         <div className="user-profile">
-          <div className="profile-avatar">
-            <span className="profile-icon">👤</span>
+          <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
+            <span className="profile-icon" aria-hidden="true">👤</span>
           </div>
         </div>
       </header>
 
-      <div className="listening-game-content">
-        <div className="game-stats">
-          <div className="score-display">
-            <span className="score-icon">⭐</span>
-            <span className="score-text">Score: {score}</span>
+      <main className="listening-game-content" role="main">
+        <section className="game-stats" aria-labelledby="game-stats-heading">
+          <h2 id="game-stats-heading" className="sr-only">Current game statistics</h2>
+          
+          <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
+            <span className="score-icon" aria-hidden="true" role="img">⭐</span>
+            <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
           </div>
           
-          <div className="lives-display">
+          <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
             {Array.from({ length: 3 }, (_, index) => (
               <span 
                 key={index} 
                 className={`heart ${index < lives ? 'active' : 'inactive'}`}
+                aria-hidden="true"
+                role="img"
               >
-                ❤️
+                {index < lives ? '❤️' : '💔'}
               </span>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="question-container2">
+        <section className="question-container2" aria-labelledby="current-question-heading">
+          <h2 id="current-question-heading" className="sr-only">Listening comprehension question</h2>
+          
           <div className="question-header">
-            <h2 className="question-counter">Question {currentQuestion + 1}/6</h2>
+            <h3 className="question-counter">Question {currentQuestion + 1}/{questions.length}</h3>
           </div>
 
+          
 
-           
-
-          {/* Pregunta */}
           <div className="question-content">
-            <h3 className="question-text">{currentQ.question}</h3>
+            <h4 className="question-text" id="current-question">{currentQ.question}</h4>
             
-            <div className="answers-grid">
+            <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
               {currentQ.options.map((option, index) => {
                 let buttonClass = 'answer-option';
+                let ariaLabel = option;
                 
                 if (showResult) {
                   if (option === currentQ.correctAnswer) {
                     buttonClass += ' correct';
+                    ariaLabel = `${option} - Correct answer`;
                   } else if (option === wrongAnswer) {
                     buttonClass += ' wrong';
+                    ariaLabel = `${option} - Incorrect answer`;
                   }
                 } else if (selectedAnswer === option) {
                   buttonClass += ' selected';
+                  ariaLabel = `${option} - Selected`;
                 }
 
                 return (
@@ -293,7 +385,12 @@ const ListeningGame = ({
                     key={index}
                     className={buttonClass}
                     onClick={() => handleAnswerSelect(option)}
+                    onKeyDown={(e) => handleKeyDown(e, () => handleAnswerSelect(option))}
                     disabled={showResult}
+                    role="radio"
+                    aria-checked={selectedAnswer === option}
+                    aria-label={ariaLabel}
+                    tabIndex={0}
                   >
                     {option}
                   </button>
@@ -301,21 +398,30 @@ const ListeningGame = ({
               })}
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="game-buttons">
-          <button onClick={onBack} className="back-button">
+        <nav className="game-buttons" aria-label="Game navigation">
+          <button 
+            onClick={onBack}
+            onKeyDown={(e) => handleKeyDown(e, onBack)}
+            className="back-button"
+            aria-label="Go back to levels selection"
+            tabIndex={0}
+          >
             Back
           </button>
           <button 
-            onClick={handleNext} 
+            onClick={handleNext}
+            onKeyDown={(e) => handleKeyDown(e, handleNext)}
             className="next-button"
             disabled={!selectedAnswer && !showResult}
+            aria-label={showResult ? (currentQuestion < questions.length - 1 ? 'Go to next question' : 'Finish game') : 'Submit answer'}
+            tabIndex={0}
           >
-            {showResult ? (currentQuestion < questions.length - 1 ? 'Next' : 'Finish') : 'Next'}
+            {showResult ? (currentQuestion < questions.length - 1 ? 'Next' : 'Finish') : 'Submit'}
           </button>
-        </div>
-      </div>
+        </nav>
+      </main>
     </div>
   );
 };

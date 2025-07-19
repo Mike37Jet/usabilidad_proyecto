@@ -29,71 +29,129 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
     onNavigateToListening();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   return (
     <div className="dashboard-container">
-      <header className="dashboard-header">
+      <header className="dashboard-header" role="banner">
         <div className="header-logo">
           <img 
             src="/logo_app.svg" 
-            alt="English Club Logo" 
+            alt="English Club - Basic English learning application" 
             className="header-logo-img"
+            role="img"
+            tabIndex={0}
           />
         </div>
-        <button onClick={handleLogout} className="logout-button">
-          Log out
+        <button 
+          onClick={handleLogout} 
+          onKeyDown={(e) => handleKeyDown(e, handleLogout)}
+          className="logout-button"
+          aria-label="Log out and return to login page"
+          type="button"
+          tabIndex={0}
+        >
+          Log Out
         </button>
       </header>
 
-      <div className="dashboard-content">
-        <div className="score-section">
-          <div className="score-card">
-            <span className="score-icon">🌟</span>
-            <span className="score-text">Score</span>
-            <span className="score-number">500</span>
+      <main className="dashboard-content" role="main">
+        <section className="score-section" aria-labelledby="score-heading">
+          <h2 id="score-heading" className="sr-only">Your current score</h2>
+          <div 
+            className="score-card" 
+            role="status" 
+            aria-live="polite"
+            tabIndex={0}
+            aria-label="Score information: You have 500 points"
+          >
+            <span className="score-icon" aria-hidden="true" role="img">🌟</span>
+            <span className="score-text">Points</span>
+            <span className="score-number" aria-label="You have 500 points">500</span>
           </div>
-        </div>
+        </section>
 
-        <div className="activities-grid">
-          <div className="activity-card ">
-            <div className="activity-icon">
-              📖
-            </div>
-            <h2 className="activity-title">Reading</h2>
-            <p className="activity-description">
-              Improve your reading comprehension with interactive texts, articles and vocabulary exercises adapted to your level.
-            </p>
-            <button onClick={handleStartReading} className="activity-button reading-button">
-              Start Reading
-            </button>
-          </div>
+        <section className="activities-section" aria-labelledby="activities-heading">
+          <h2 id="activities-heading" className="sr-only">Available learning activities</h2>
+          <div className="activities-grid" role="group">
+            
+            <article className="activity-card reading-card3" role="article" tabIndex={0}>
+              <div className="activity-icon" aria-hidden="true" role="img">
+                📖
+              </div>
+              <h3 className="activity-title">Reading</h3>
+              <p className="activity-description">
+                Improve your reading skills with simple texts, articles and basic vocabulary exercises.
+              </p>
+              <button 
+                onClick={handleStartReading} 
+                onKeyDown={(e) => handleKeyDown(e, handleStartReading)}
+                className="activity-button reading-button"
+                aria-describedby="reading-description"
+                type="button"
+                tabIndex={0}
+              >
+                Start Reading
+              </button>
+              <div id="reading-description" className="sr-only">
+                Reading activity for basic English level
+              </div>
+            </article>
 
-          <div className="activity-card grammar2-card">
-            <div className="activity-icon">
-              🗣️
-            </div>
-            <h2 className="activity-title">Grammar</h2>
-            <p className="activity-description">
-              Practice your pronunciation and fluency with conversation exercises and real-time voice recognition
-            </p>
-            <button onClick={handleStartSpeaking} className="activity-button grammar-button">
-              Start Speaking
-            </button>
-          </div>
+            <article className="activity-card grammar2-card" role="article" tabIndex={0}>
+              <div className="activity-icon" aria-hidden="true" role="img">
+                📝
+              </div>
+              <h3 className="activity-title">Grammar</h3>
+              <p className="activity-description">
+                Practice basic grammar with simple exercises and easy-to-understand explanations.
+              </p>
+              <button 
+                onClick={handleStartSpeaking} 
+                onKeyDown={(e) => handleKeyDown(e, handleStartSpeaking)}
+                className="activity-button grammar-button"
+                aria-describedby="grammar-description"
+                type="button"
+                tabIndex={0}
+              >
+                Start Grammar
+              </button>
+              <div id="grammar-description" className="sr-only">
+                Grammar activity for basic English level
+              </div>
+            </article>
 
-          <div className="activity-card reading2-card">
-            <div className="activity-icon">
-              🎧
-            </div>
-            <h2 className="activity-title">Listening</h2>
-            <p className="activity-description">
-              Develop your listening skills with audio content, conversations and exercises with different accents
-            </p>
-            <button onClick={handleStartListening} className="activity-button listening-button">
-              Start Listening
-            </button>
+            <article className="activity-card reading2-card" role="article" tabIndex={0}>
+              <div className="activity-icon" aria-hidden="true" role="img">
+                🎧
+              </div>
+              <h3 className="activity-title">Listening</h3>
+              <p className="activity-description">
+                Develop your listening skills with slow audios, basic conversations and simple exercises.
+              </p>
+              <button 
+                onClick={handleStartListening} 
+                onKeyDown={(e) => handleKeyDown(e, handleStartListening)}
+                className="activity-button listening-button"
+                aria-describedby="listening-description"
+                type="button"
+                tabIndex={0}
+              >
+                Start Listening
+              </button>
+              <div id="listening-description" className="sr-only">
+                Listening activity for basic English level
+              </div>
+            </article>
+
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 };
