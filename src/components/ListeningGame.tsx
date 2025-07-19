@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { usePoints } from '../contexts/PointsContext.tsx';
 import './ListeningGame.css';
 
 interface ListeningGameProps {
@@ -12,34 +13,29 @@ const ListeningGame = ({
   onBack, 
   onComplete
 }: ListeningGameProps) => {
+  const { points, addPoints } = usePoints();
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(() => {
-    const savedScore = localStorage.getItem('listeningScore');
-    return savedScore ? parseInt(savedScore) : 0;
-  });
-  const [lives, setLives] = useState(() => {
-    const savedLives = localStorage.getItem('listeningLives');
-    return savedLives ? parseInt(savedLives) : 3;
-  });
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
+  const [sessionPoints, setSessionPoints] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [wrongAnswer, setWrongAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef(null);
 
-  // Guardar en localStorage cuando cambien score o lives
+  // Cargar puntos de sesión desde localStorage
   useEffect(() => {
-    localStorage.setItem('listeningScore', score.toString());
-    window.dispatchEvent(new CustomEvent('listeningScoreChanged', { detail: score }));
-  }, [score]);
+    const savedSessionPoints = localStorage.getItem('listeningSessionPoints');
+    setSessionPoints(savedSessionPoints ? parseInt(savedSessionPoints) : 0);
+  }, []);
 
+  // Guardar puntos de sesión en localStorage cuando cambien
   useEffect(() => {
-    localStorage.setItem('listeningLives', lives.toString());
-    window.dispatchEvent(new CustomEvent('listeningLivesChanged', { detail: lives }));
-  }, [lives]);
+    localStorage.setItem('listeningSessionPoints', sessionPoints.toString());
+  }, [sessionPoints]);
 
   // Preguntas por nivel
   const questions = [
@@ -194,7 +190,7 @@ const ListeningGame = ({
 
   const handleRestart = () => {
     setCurrentQuestion(0);
-    setScore(0);
+    setSessionPoints(0);
     setLives(3);
     setSelectedAnswer(null);
     setWrongAnswer(null);
@@ -202,8 +198,7 @@ const ListeningGame = ({
     setGameOver(false);
     setIsPlaying(false);
     setCurrentTime(0);
-    localStorage.removeItem('listeningScore');
-    localStorage.removeItem('listeningLives');
+    localStorage.removeItem('listeningSessionPoints');
   };
 
   const handleNext = () => {
@@ -216,13 +211,15 @@ const ListeningGame = ({
         setIsPlaying(false);
         setCurrentTime(0);
       } else {
-        localStorage.removeItem('listeningScore');
-        localStorage.removeItem('listeningLives');
-        onComplete(score);
+        // Quiz completado - agregar puntos de sesión al sistema global
+        addPoints(sessionPoints);
+        localStorage.removeItem('listeningSessionPoints');
+        onComplete(sessionPoints);
       }
     } else if (selectedAnswer) {
       if (selectedAnswer === currentQ.correctAnswer) {
-        setScore(score + 1);
+        const newSessionPoints = sessionPoints + 10; // 10 puntos por respuesta correcta
+        setSessionPoints(newSessionPoints);
         setWrongAnswer(null);
       } else {
         setWrongAnswer(selectedAnswer);
@@ -266,8 +263,8 @@ const ListeningGame = ({
             <h2 id="final-stats-heading" className="sr-only">Final game statistics</h2>
             
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
-              <span className="score-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Final score: ${score} points`}>SCORE {score}</span>
+              <span className="star-icon" aria-hidden="true" role="img">⭐</span>
+              <span className="score-text" aria-label={`Final points: ${points + sessionPoints} points`}>POINTS {points + sessionPoints}</span>
             </div>
             
             <div className="question-counter" tabIndex={0}>
@@ -294,11 +291,11 @@ const ListeningGame = ({
                 className="restart-button" 
                 onClick={handleRestart}
                 onKeyDown={(e) => handleKeyDown(e, handleRestart)}
-                aria-label="Restart the listening game"
+                aria-label="Restart the listening exercise"
                 tabIndex={0}
                 autoFocus
               >
-                Start again
+                Start Again
               </button>
             </div>
           </section>
@@ -332,10 +329,15 @@ const ListeningGame = ({
           <h2 id="game-stats-heading" className="sr-only">Current game statistics</h2>
           
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
-            <span className="score-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
+            <span className="star-icon" aria-hidden="true" role="img">⭐</span>
+            <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
           </div>
           
+          <div className="question-counter" tabIndex={0}>
+            <h3>Question</h3>
+            <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
+          </div>
+
           <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
             {Array.from({ length: 3 }, (_, index) => (
               <span 
@@ -351,71 +353,129 @@ const ListeningGame = ({
         </section>
 
         <section className="question-container2" aria-labelledby="current-question-heading">
-          <h2 id="current-question-heading" className="sr-only">Listening comprehension question</h2>
+          <h2 id="current-question-heading" className="sr-only">Listening exercise question</h2>
           
-          <div className="question-header">
-            <h3 className="question-counter">Question {currentQuestion + 1}/{questions.length}</h3>
+          <div className="audio-player" role="group" aria-labelledby="audio-controls">
+            <h3 id="audio-controls" className="sr-only">Audio player controls</h3>
+            
+            <audio
+              ref={audioRef}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleLoadedMetadata}
+              onEnded={() => setIsPlaying(false)}
+              preload="metadata"
+            >
+              <source src={currentQ.audioSrc} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+
+            <div className="audio-controls" onKeyDown={handleAudioKeyDown} tabIndex={0}>
+              <button
+                onClick={handlePlayPause}
+                className="play-pause-btn"
+                aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
+                tabIndex={0}
+              >
+                {isPlaying ? '⏸️' : '▶️'}
+              </button>
+
+              <div className="time-display" aria-live="polite">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </div>
+
+              <button
+                onClick={() => skipTime(-5)}
+                className="skip-btn"
+                aria-label="Skip back 5 seconds"
+                tabIndex={0}
+              >
+                ⏪
+              </button>
+
+              <button
+                onClick={() => skipTime(5)}
+                className="skip-btn"
+                aria-label="Skip forward 5 seconds"
+                tabIndex={0}
+              >
+                ⏩
+              </button>
+            </div>
+
+            <div
+              className="progress-bar"
+              onClick={handleProgressClick}
+              role="progressbar"
+              aria-valuenow={Math.round((currentTime / duration) * 100) || 0}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`Audio progress: ${Math.round((currentTime / duration) * 100) || 0}%`}
+              tabIndex={0}
+            >
+              <div
+                className="progress-fill"
+                style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
+              ></div>
+            </div>
           </div>
 
-          
+          <div className="question-text" id="current-question">
+            {currentQ.question}
+          </div>
 
-          <div className="question-content">
-            <h4 className="question-text" id="current-question">{currentQ.question}</h4>
-            
-            <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
-              {currentQ.options.map((option, index) => {
-                let buttonClass = 'answer-option';
-                let ariaLabel = option;
-                
-                if (showResult) {
-                  if (option === currentQ.correctAnswer) {
-                    buttonClass += ' correct';
-                    ariaLabel = `${option} - Correct answer`;
-                  } else if (option === wrongAnswer) {
-                    buttonClass += ' wrong';
-                    ariaLabel = `${option} - Incorrect answer`;
-                  }
-                } else if (selectedAnswer === option) {
-                  buttonClass += ' selected';
-                  ariaLabel = `${option} - Selected`;
+          <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
+            {currentQ.options.map((option, index) => {
+              let buttonClass = 'answer-option';
+              let ariaLabel = option;
+              
+              if (showResult) {
+                if (option === currentQ.correctAnswer) {
+                  buttonClass += ' correct';
+                  ariaLabel = `${option} - Correct answer`;
+                } else if (option === wrongAnswer) {
+                  buttonClass += ' wrong';
+                  ariaLabel = `${option} - Incorrect answer`;
                 }
+              } else if (selectedAnswer === option) {
+                buttonClass += ' selected';
+                ariaLabel = `${option} - Selected`;
+              }
 
-                return (
-                  <button
-                    key={index}
-                    className={buttonClass}
-                    onClick={() => handleAnswerSelect(option)}
-                    onKeyDown={(e) => handleKeyDown(e, () => handleAnswerSelect(option))}
-                    disabled={showResult}
-                    role="radio"
-                    aria-checked={selectedAnswer === option}
-                    aria-label={ariaLabel}
-                    tabIndex={0}
-                  >
-                    {option}
-                  </button>
-                );
-              })}
-            </div>
+              return (
+                <button
+                  key={index}
+                  className={buttonClass}
+                  onClick={() => handleAnswerSelect(option)}
+                  onKeyDown={(e) => handleKeyDown(e, () => handleAnswerSelect(option))}
+                  disabled={showResult}
+                  role="radio"
+                  aria-checked={selectedAnswer === option}
+                  aria-label={ariaLabel}
+                  tabIndex={0}
+                >
+                  {option}
+                </button>
+              );
+            })}
           </div>
         </section>
 
         <nav className="game-buttons" aria-label="Game navigation">
           <button 
-            onClick={onBack}
+            onClick={onBack} 
             onKeyDown={(e) => handleKeyDown(e, onBack)}
             className="back-button"
-            aria-label="Go back to levels selection"
+            aria-label="Go back to level selection"
             tabIndex={0}
           >
             Back
           </button>
           <button 
-            onClick={handleNext}
+            onClick={handleNext} 
             onKeyDown={(e) => handleKeyDown(e, handleNext)}
             className="next-button"
             disabled={!selectedAnswer && !showResult}
-            aria-label={showResult ? (currentQuestion < questions.length - 1 ? 'Go to next question' : 'Finish game') : 'Submit answer'}
+            aria-label={showResult ? (currentQuestion < questions.length - 1 ? 'Go to next question' : 'Finish quiz') : 'Submit answer'}
             tabIndex={0}
           >
             {showResult ? (currentQuestion < questions.length - 1 ? 'Next' : 'Finish') : 'Submit'}

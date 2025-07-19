@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { PointsProvider } from './contexts/PointsContext.tsx';
 import Login from './components/Login.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import Reading from './components/Reading.tsx';
@@ -12,8 +13,6 @@ import ListeningGame from './components/ListeningGame.tsx';
 function App() {
   const [currentState, setCurrentState] = useState('login');
   const [selectedLevel, setSelectedLevel] = useState(1);
-  const [userScore, setUserScore] = useState(500); // Score del usuario
-  const [userLives, setUserLives] = useState(3); // Vidas del usuario
 
   const handleLoginSuccess = () => {
     console.log('Login successful');
@@ -68,10 +67,7 @@ function App() {
 
   const handleGameComplete = (score: number) => {
     console.log(`Game completed with score: ${score}`);
-    // Actualizar el score del usuario
-    setUserScore(prevScore => prevScore + (score * 10)); // 10 puntos por respuesta correcta
-    // Aquí puedes agregar lógica para guardar el progreso
-    alert(`Congratulations! You scored ${score}/6`);
+    alert(`Congratulations! You earned ${score} points!`);
     setCurrentState('listeningLevels');
   };
 
@@ -82,8 +78,7 @@ function App() {
 
   const handleGrammarGameComplete = (score: number) => {
     console.log(`Grammar game completed with score: ${score}`);
-    setUserScore(prevScore => prevScore + (score * 10));
-    alert(`Congratulations! You scored ${score}/${3}`);
+    alert(`Congratulations! You earned ${score} points!`);
     setCurrentState('dashboard');
   };
 
@@ -93,56 +88,56 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {currentState === 'login' && (
-        <Login onLoginSuccess={handleLoginSuccess} />
-      )}
-      {currentState === 'dashboard' && (
-        <Dashboard 
-          onLogout={handleLogout} 
-          onNavigateToReading={handleNavigateToReading}
-          onNavigateToListening={handleNavigateToListening}
-          onNavigateToGrammar={handleNavigateToGrammar}
-        />
-      )}
-      {currentState === 'reading' && (
-        <Reading onBack={handleBackToDashboard} />
-      )}
-      {currentState === 'listening' && (
-        <Listening 
-          onNavigateBack={handleBackToDashboard}
-          onNavigateToLevels={handleNavigateToListeningLevels}
-        />
-      )}
-      {currentState === 'grammar' && (
-        <Grammar 
-          onNavigateBack={handleBackToDashboard}
-          onNavigateToLevels={handleNavigateToGrammarGame}
-        />
-      )}
-      {currentState === 'listeningLevels' && (
-        <ListeningLevels 
-          onNavigateBack={handleBackToListening}
-          onLevelSelect={handleLevelSelect}
-          score={userScore}
-          lives={userLives}
-        />
-      )}
-      {currentState === 'listeningGame' && (
-        <ListeningGame 
-          level={selectedLevel}
-          onBack={handleBackToListeningLevels}
-          onComplete={handleGameComplete}
-        />
-      )}
-      {currentState === 'grammarGame' && (
-        <GrammarGame 
-          level={selectedLevel}
-          onBack={handleBackToGrammar}
-          onComplete={handleGrammarGameComplete}
-        />
-      )}
-    </div>
+    <PointsProvider>
+      <div className="App">
+        {currentState === 'login' && (
+          <Login onLoginSuccess={handleLoginSuccess} />
+        )}
+        {currentState === 'dashboard' && (
+          <Dashboard 
+            onLogout={handleLogout} 
+            onNavigateToReading={handleNavigateToReading}
+            onNavigateToListening={handleNavigateToListening}
+            onNavigateToGrammar={handleNavigateToGrammar}
+          />
+        )}
+        {currentState === 'reading' && (
+          <Reading onBack={handleBackToDashboard} />
+        )}
+        {currentState === 'listening' && (
+          <Listening 
+            onNavigateBack={handleBackToDashboard}
+            onNavigateToLevels={handleNavigateToListeningLevels}
+          />
+        )}
+        {currentState === 'grammar' && (
+          <Grammar 
+            onNavigateBack={handleBackToDashboard}
+            onNavigateToLevels={handleNavigateToGrammarGame}
+          />
+        )}
+        {currentState === 'listeningLevels' && (
+          <ListeningLevels 
+            onNavigateBack={handleBackToListening}
+            onLevelSelect={handleLevelSelect}
+          />
+        )}
+        {currentState === 'listeningGame' && (
+          <ListeningGame 
+            level={selectedLevel}
+            onBack={handleBackToListeningLevels}
+            onComplete={handleGameComplete}
+          />
+        )}
+        {currentState === 'grammarGame' && (
+          <GrammarGame 
+            level={selectedLevel}
+            onBack={handleBackToGrammar}
+            onComplete={handleGrammarGameComplete}
+          />
+        )}
+      </div>
+    </PointsProvider>
   );
 }
 

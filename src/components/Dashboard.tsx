@@ -1,4 +1,5 @@
 import React from 'react';
+import { usePoints } from '../contexts/PointsContext.tsx';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -9,6 +10,8 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNavigateToGrammar }: DashboardProps) => {
+  const { points } = usePoints();
+
   const handleLogout = () => {
     console.log('Logout');
     onLogout();
@@ -62,17 +65,17 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
 
       <main className="dashboard-content" role="main">
         <section className="score-section" aria-labelledby="score-heading">
-          <h2 id="score-heading" className="sr-only">Your current score</h2>
+          <h2 id="score-heading" className="sr-only">Your current points</h2>
           <div 
             className="score-card" 
             role="status" 
             aria-live="polite"
             tabIndex={0}
-            aria-label="Score information: You have 500 points"
+            aria-label={`Points information: You have ${points} points`}
           >
             <span className="score-icon" aria-hidden="true" role="img">🌟</span>
             <span className="score-text">Points</span>
-            <span className="score-number" aria-label="You have 500 points">500</span>
+            <span className="score-number" aria-label={`You have ${points} points`}>{points}</span>
           </div>
         </section>
 

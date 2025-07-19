@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { usePoints } from '../contexts/PointsContext.tsx';
 import './GrammarGame.css';
 
 interface GrammarGameProps {
@@ -17,17 +18,18 @@ interface Question {
 }
 
 const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
+  const { points, addPoints } = usePoints();
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [sessionPoints, setSessionPoints] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [lives, setLives] = useState(3);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [showResult, setShowResult] = useState(false);
   
   // Preguntas para el juego del ahorcado y múltiple opción
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-  const [selectedLetters, setSelectedLetters] = useState<string[]>([]);
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  const [selectedLetters, setSelectedLetters] = useState([]);
 
   const getCurrentHangmanWord = () => {
     return currentQ.word || 'SPELL';
@@ -117,7 +119,8 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
         // Verificar si la palabra está completa
         const wordComplete = currentWord.split('').every(l => newGuessedLetters.includes(l));
         if (wordComplete) {
-          setScore(score + 1);
+          const newSessionPoints = sessionPoints + 10; // 10 puntos por palabra completada
+          setSessionPoints(newSessionPoints);
           setTimeout(() => {
             handleNext();
           }, 1500);
@@ -142,7 +145,8 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
       setShowResult(true);
       
       if (correct) {
-        setScore(score + 1);
+        const newSessionPoints = sessionPoints + 10; // 10 puntos por respuesta correcta
+        setSessionPoints(newSessionPoints);
       } else {
         const newLives = lives - 1;
         setLives(newLives);
@@ -164,14 +168,16 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
       setGuessedLetters([]);
       setSelectedLetters([]);
     } else {
+      // Quiz completado - agregar puntos de sesión al sistema global
+      addPoints(sessionPoints);
       setGameCompleted(true);
-      onComplete(score);
+      onComplete(sessionPoints);
     }
   };
 
   const handleRestart = () => {
     setCurrentQuestion(0);
-    setScore(0);
+    setSessionPoints(0);
     setSelectedAnswer(null);
     setLives(3);
     setGameCompleted(false);
@@ -209,7 +215,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
             
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Final score: ${score} points`}>SCORE {score}</span>
+              <span className="score-text" aria-label={`Final points: ${points + sessionPoints} points`}>POINTS {points + sessionPoints}</span>
             </div>
             
             <div className="question-info2" tabIndex={0}>
@@ -340,7 +346,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
           
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
+            <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
           </div>
           
           <div className="question-info2" tabIndex={0}>
@@ -371,8 +377,6 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
           
           {currentQ.type === 'hangman' ? (
             <div className="hangman-game">
-              {/* Eliminar la línea que mostraba currentQ.question */}
-              
               {renderHangman()}
               
               <div className="word-display" role="group" aria-labelledby="word-progress" aria-describedby="hangman-instruction">

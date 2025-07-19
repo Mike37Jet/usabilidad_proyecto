@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { usePoints } from '../contexts/PointsContext.tsx';
 import './Reading.css';
 
 interface ReadingProps {
@@ -6,14 +7,15 @@ interface ReadingProps {
 }
 
 const Reading = ({ onBack }: ReadingProps) => {
+  const { points, addPoints } = usePoints();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
+  const [sessionScore, setSessionScore] = useState(0); // Puntos de la sesión actual
   const [lives, setLives] = useState(3);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [wrongAnswer, setWrongAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(300);
@@ -120,7 +122,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
     setIsPlaying(false);
     setIsQuizMode(false);
     setCurrentQuestion(0);
-    setScore(0);
+    setSessionScore(0);
     setLives(3);
     setSelectedAnswer(null);
     setWrongAnswer(null);
@@ -133,7 +135,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
     setIsPlaying(false);
     setIsQuizMode(false);
     setCurrentQuestion(0);
-    setScore(0);
+    setSessionScore(0);
     setLives(3);
     setSelectedAnswer(null);
     setWrongAnswer(null);
@@ -144,26 +146,25 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
 
   const handleNext = () => {
     if (isPlaying && !isQuizMode) {
-      // Pasar del modo lectura al modo quiz
       setIsQuizMode(true);
       setCurrentQuestion(0);
     } else if (isQuizMode && showResult) {
-      // Avanzar a la siguiente pregunta después de mostrar el resultado
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setSelectedAnswer(null);
         setWrongAnswer(null);
         setShowResult(false);
       } else {
-        // Quiz completado
-        alert(`Quiz completed! Your final score: ${score}/${questions.length}`);
+        // Quiz completado - agregar puntos totales al sistema global
+        addPoints(sessionScore);
+        alert(`Quiz completed! You earned ${sessionScore} points! Total points: ${points + sessionScore}`);
         handleRestart();
       }
     } else if (isQuizMode && selectedAnswer) {
-      // Verificar respuesta y mostrar resultado
       const currentQ = questions[currentQuestion];
       if (selectedAnswer === currentQ.correctAnswer) {
-        setScore(score + 1);
+        const newSessionScore = sessionScore + 10; // 10 puntos por respuesta correcta
+        setSessionScore(newSessionScore);
         setWrongAnswer(null);
       } else {
         setWrongAnswer(selectedAnswer);
@@ -224,7 +225,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
             
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="score-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
+              <span className="score-text" aria-label={`Current points: ${points + sessionScore} points`}>Points: {points + sessionScore}</span>
             </div>
             
             <div className="question-counter" tabIndex={0}>
@@ -412,7 +413,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
             
             <div className="score-display" role="status" aria-live="polite">
               <span className="score-icon" aria-hidden="true">⭐</span>
-              <span className="score-text" aria-label={`Final score: ${score} points`}>SCORE {score}</span>
+              <span className="score-text" aria-label={`Final points: ${points + sessionScore} points`}>POINTS {points + sessionScore}</span>
             </div>
             
             <div className="question-counter">

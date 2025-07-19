@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { usePoints } from '../contexts/PointsContext.tsx';
 import './ListeningLevels.css';
 
 interface ListeningLevelsProps {
   onNavigateBack: () => void;
   onLevelSelect: (level: number) => void;
-  score: number;
-  lives: number;
 }
 
-const ListeningLevels = ({ onNavigateBack, onLevelSelect, score: propScore, lives: propLives }: ListeningLevelsProps) => {
-  const [score, setScore] = useState(0);
-  const [lives, setLives] = useState(3);
+const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps) => {
+  const { points } = usePoints();
+  const [sessionPoints, setSessionPoints] = useState(0);
 
-  // Actualizar desde localStorage al montar el componente
+  // Cargar puntos de sesión de listening desde localStorage
   useEffect(() => {
-    const savedScore = localStorage.getItem('listeningScore');
-    
-    setScore(savedScore ? parseInt(savedScore) : propScore || 0);
-    setLives(3);
-    localStorage.setItem('listeningLives', '3');
-  }, [propScore, propLives]);
+    const savedSessionPoints = localStorage.getItem('listeningSessionPoints');
+    setSessionPoints(savedSessionPoints ? parseInt(savedSessionPoints) : 0);
+  }, []);
 
   const levels = [1, 2, 3, 4, 5, 6];
 
@@ -62,7 +58,7 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect, score: propScore, live
           
           <div className="score-section" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current score: ${score} points`}>Score: {score}</span>
+            <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
           </div>
         </section>
 
