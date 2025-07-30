@@ -8,23 +8,23 @@ interface ListeningGameProps {
   onComplete: (score: number) => void;
 }
 
-const ListeningGame = ({ 
-  level, 
-  onBack, 
+const ListeningGame = ({
+  level,
+  onBack,
   onComplete
 }: ListeningGameProps) => {
   const { points, addPoints } = usePoints();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [sessionPoints, setSessionPoints] = useState(0);
   const [lives, setLives] = useState(3);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [wrongAnswer, setWrongAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Cargar puntos de sesión desde localStorage
   useEffect(() => {
@@ -37,73 +37,353 @@ const ListeningGame = ({
     localStorage.setItem('listeningSessionPoints', sessionPoints.toString());
   }, [sessionPoints]);
 
-  // Preguntas por nivel
-  const questions = [
-    {
-      question: "Fred mentions that going to bed is fine but going out to party is fine too, which verb phrase does he use to express this idea?",
-      audioSrc: "audio_level1_q1.mp3",
-      options: [
-        "to be great in bed",
-        "stay comfortable", 
-        "to be patient"
-      ],
-      correctAnswer: "stay comfortable"
+  // Configuración de niveles - UN AUDIO POR NIVEL
+  const levelData = {
+    1: {
+      audioSrc: "/audio/level1_q1.mp3", // Un solo audio para todo el nivel 1
+      questions: [
+        {
+          question: "What does the speaker use to secure themselves to their sleeping bag in space?",
+          options: [
+            "Velcro straps",
+            "Bungee cords",
+            "Safety harnesses",
+            "Magnetic clips"
+          ],
+          correctAnswer: "Bungee cords"
+        },
+        {
+          question: "According to the speaker, where do astronauts sleep during boat missions?",
+          options: [
+            "In private cabins",
+            "In the airlock or using a camp-like setup",
+            "In the command center",
+            "In rotating shifts"
+          ],
+          correctAnswer: "In the airlock or using a camp-like setup"
+        },
+        {
+          question: "What does the speaker say about adjusting to sleep in space for short-term missions?",
+          options: [
+            "It's very easy to adapt",
+            "It's very difficult to adjust",
+            "It requires special medication",
+            "It depends on the person"
+          ],
+          correctAnswer: "It's very difficult to adjust"
+        },
+        {
+          question: "How does the speaker describe sleeping on the space station compared to boat missions?",
+          options: [
+            "Much more uncomfortable",
+            "Exactly the same",
+            "More comfortable with your own small closet space",
+            "Requires more equipment"
+          ],
+          correctAnswer: "More comfortable with your own small closet space"
+        },
+        {
+          question: "What does the speaker say about long-term adaptation to sleeping in space?",
+          options: [
+            "It never becomes natural",
+            "It seems very natural",
+            "It requires constant medication",
+            "It gets progressively worse"
+          ],
+          correctAnswer: "It seems very natural"
+        }
+      ]
     },
-    {
-      question: "What does Sarah suggest for dealing with stress?",
-      audioSrc: "audio_level1_q2.mp3",
-      options: [
-        "Take deep breaths",
-        "Exercise regularly",
-        "Listen to music",
-        "All of the above"
-      ],
-      correctAnswer: "All of the above"
+    2: {
+      audioSrc: "/audio/level2.mp3", // Un solo audio para todo el nivel 2
+      questions: [
+        {
+          question: "According to the speaker, what is a problem with most video games?",
+          options: [
+            "They have too many bugs",
+            "They are expensive to make",
+            "They are created from a male perspective",
+            "They are not fun to play"
+          ],
+          correctAnswer: "They are created from a male perspective"
+        },
+        {
+          question: "Why is creating games from a male perspective considered bad by the speaker?",
+          options: [
+            "It makes the games too long",
+            "It is unnecessary and not inclusive",
+            "It reduces the difficulty",
+            "It lowers the graphics quality"
+          ],
+          correctAnswer: "It is unnecessary and not inclusive"
+        },
+        {
+          question: "How does the speaker describe the portrayal of female characters?",
+          options: [
+            "Realistic and relatable",
+            "Always heroic",
+            "Sexualized from a male perspective",
+            "Strong and independent"
+          ],
+          correctAnswer: "Sexualized from a male perspective"
+        },
+        {
+          question: "What solution does the speaker suggest to make games more inclusive?",
+          options: [
+            "Reduce the budget",
+            "Hire more male developers",
+            "Use simpler mechanics",
+            "Have a more diverse development team"
+          ],
+          correctAnswer: "Have a more diverse development team"
+        },
+        {
+          question: "What does the speaker say about the future of stereotypical video games like Hector’s?",
+          options: [
+            "They will disappear completely",
+            "They will only be for kids",
+            "There is still an audience for them",
+            "They will be banned"
+          ],
+          correctAnswer: "There is still an audience for them"
+        }
+      ]
     },
-    {
-      question: "According to the conversation, what time does the meeting start?",
-      audioSrc: "audio_level1_q3.mp3",
-      options: [
-        "9:00 AM",
-        "9:30 AM",
-        "10:00 AM",
-        "10:30 AM"
-      ],
-      correctAnswer: "9:30 AM"
+    3: {
+      audioSrc: "/audio/level3.mp3", // Un solo audio para todo el nivel 3
+      questions: [
+        {
+          question: "How does the speaker feel about working in Antarctica?",
+          options: [
+            "She is thrilled to be there.",
+            "She has mixed feelings.",
+            "She needs a lot of persuasion to commit to going there.",
+            "She dislikes it entirely."
+          ],
+          correctAnswer: "She has mixed feelings."
+        },
+        {
+          question: "How does she feel about Antarctic summers?",
+          options: [
+            "She resents not being able to go outside without protective gear.",
+            "Occasionally it can be very pleasant.",
+            "She can regularly be seen wearing a T-shirt outside.",
+            "She never goes outside during summer."
+          ],
+          correctAnswer: "Occasionally it can be very pleasant."
+        },
+        {
+          question: "What is the main research focus mentioned by the speaker?",
+          options: [
+            "Climate change effects",
+            "Wildlife behavior",
+            "Ice formation patterns",
+            "Weather systems"
+          ],
+          correctAnswer: "Climate change effects"
+        },
+        {
+          question: "How long is a typical research season in Antarctica?",
+          options: [
+            "3 months",
+            "6 months",
+            "9 months",
+            "1 year"
+          ],
+          correctAnswer: "6 months"
+        },
+        {
+          question: "What does the speaker find most challenging about Antarctic life?",
+          options: [
+            "The extreme cold",
+            "Limited communication",
+            "Isolation from family",
+            "Equipment maintenance"
+          ],
+          correctAnswer: "Isolation from family"
+        }
+      ]
     },
-    {
-      question: "What is the main topic of the dialogue?",
-      audioSrc: "audio_level1_q4.mp3",
-      options: [
-        "Travel plans",
-        "Work schedule",
-        "Weekend activities",
-        "Health tips"
-      ],
-      correctAnswer: "Weekend activities"
+    4: {
+      audioSrc: "/audio/level4.mp3",
+      questions: [
+        {
+          question: "What topic is the speaker discussing in this audio?",
+          options: [
+            "Marine conservation",
+            "Curatorial work at a museum",
+            "History of Napoleonic wars",
+            "Fashion design education"
+          ],
+          correctAnswer: "Curatorial work at a museum"
+        },
+        {
+          question: "What is one object the speaker researched recently?",
+          options: [
+            "A medieval tapestry",
+            "A Napoleonic metal cabinet",
+            "A Roman statue",
+            "An Egyptian coffin"
+          ],
+          correctAnswer: "A Napoleonic metal cabinet"
+        },
+        {
+          question: "What did the speaker study to prepare for her current job?",
+          options: [
+            "Museum management",
+            "Art restoration",
+            "History of design",
+            "Fashion marketing"
+          ],
+          correctAnswer: "History of design"
+        },
+        {
+          question: "What does the speaker say about working with objects in the collection?",
+          options: [
+            "They are often too damaged to study.",
+            "They don't offer new insights after being studied.",
+            "They always reveal something unexpected.",
+            "They are only accessible to senior staff."
+          ],
+          correctAnswer: "They always reveal something unexpected."
+        },
+        {
+          question: "How does the museum support students interested in curatorial work?",
+          options: [
+            "By offering full-time jobs directly",
+            "Through guided tours only",
+            "By providing internships and educational appointments",
+            "By offering online courses only"
+          ],
+          correctAnswer: "By providing internships and educational appointments"
+        }
+      ]
     },
-    {
-      question: "How does John feel about the new project?",
-      audioSrc: "audio_level1_q5.mp3",
-      options: [
-        "Excited",
-        "Worried",
-        "Confused",
-        "Indifferent"
-      ],
-      correctAnswer: "Excited"
-    }
-  ];
+    5: {
+      audioSrc: "/audio/level5.mp3",
+      questions: [
+        {
+          question: "What are Frank's feelings about driving?",
+          options: [
+            "Driving is a pleasure he doesn’t want to give up.",
+            "He treats driving as a way of keeping young.",
+            "He feels that having to pay attention to where he’s going takes all the fun out of it.",
+            "He is becoming more concerned about the dangers involved."
+          ],
+          correctAnswer: "He feels that having to pay attention to where he’s going takes all the fun out of it."
+        },
+        {
+          question: "How does Roy show that he feels the same as Frank?",
+          options: [
+            "He agrees that the over 80’s are considered by many to be insignificant.",
+            "He is as proud as Frank of having reached this age.",
+            "He senses that there is very little left for them to do in their lives.",
+            "He shares the opinion about driving not being a suitable activity after a certain age."
+          ],
+          correctAnswer: "He shares the opinion about driving not being a suitable activity after a certain age."
+        },
+        {
+          question: "What advice does Frank give Roy?",
+          options: [
+            "To look for someone to accompany him when he drives.",
+            "To cut down dramatically on something he has been doing extensively.",
+            "To move because life on a farm is safer.",
+            "To feel proud of getting to be 80."
+          ],
+          correctAnswer: "To cut down dramatically on something he has been doing extensively."
+        },
+        {
+          question: "What reflections about Frank does Roy put forward?",
+          options: [
+            "That he lives an extremely carefree life.",
+            "That he ought to take his life more seriously.",
+            "That he would be happier with a pet.",
+            "That he needs to have closer ties with his family."
+          ],
+          correctAnswer: "That he lives an extremely carefree life."
+        },
+        {
+          question: "What regrets does Roy express?",
+          options: [
+            "That he lost contact with many people he used to know.",
+            "That he allows his previous habits to prevent him from enjoying his present circumstances.",
+            "That he didn’t travel as extensively as Frank.",
+            "That he let petty quarrels affect his family relationships."
+          ],
+          correctAnswer: "That he allows his previous habits to prevent him from enjoying his present circumstances."
+        }
+      ]
+    },
 
+    6: {
+      audioSrc: "/audio/level6.mp3",
+      questions: [
+        {
+          question: "What is the speaker mainly talking about?",
+          options: [
+            "A new technology center",
+            "A community center and its services",
+            "A private school for teenagers",
+            "A political campaign in the city"
+          ],
+          correctAnswer: "A community center and its services"
+        },
+        {
+          question: "What challenge does the center face when planning dance classes for youth?",
+          options: [
+            "Lack of qualified teachers",
+            "Limited funding for new programs",
+            "Difficulty in choosing a style teens would enjoy",
+            "Low attendance from parents"
+          ],
+          correctAnswer: "Difficulty in choosing a style teens would enjoy"
+        },
+        {
+          question: "What is one reason people take evening language classes?",
+          options: [
+            "To work with local government",
+            "To prepare for travel",
+            "To start their own business",
+            "To emigrate and find better job opportunities"
+          ],
+          correctAnswer: "To emigrate and find better job opportunities"
+        },
+        {
+          question: "Why is the after-school program helpful for parents?",
+          options: [
+            "It provides tutoring and daycare all day",
+            "It allows children to wait safely until picked up",
+            "It serves free meals and transportation",
+            "It teaches students how to use computers only"
+          ],
+          correctAnswer: "It allows children to wait safely until picked up"
+        },
+        {
+          question: "What issue is mentioned regarding housing in the area?",
+          options: [
+            "The housing market is declining rapidly",
+            "Most homes are being converted to schools",
+            "Prices are rising while incomes remain low",
+            "People are refusing to sell their properties"
+          ],
+          correctAnswer: "Prices are rising while incomes remain low"
+        }
+      ]
+    }
+  };
+
+  const currentLevelData = levelData[level as keyof typeof levelData] || levelData[1];
+  const questions = currentLevelData.questions;
   const currentQ = questions[currentQuestion];
 
+  // Cargar audio solo una vez por nivel (no cambiar entre preguntas)
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.load();
       setCurrentTime(0);
       setIsPlaying(false);
     }
-  }, [currentQuestion]);
+  }, [level]); // Solo cambiar cuando cambie el nivel, no la pregunta
 
   const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -176,7 +456,7 @@ const ListeningGame = ({
       const rect = e.currentTarget.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const newTime = (clickX / rect.width) * duration;
-      
+
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
     }
@@ -208,10 +488,16 @@ const ListeningGame = ({
         setSelectedAnswer(null);
         setWrongAnswer(null);
         setShowResult(false);
-        setIsPlaying(false);
-        setCurrentTime(0);
+        // NO reiniciar el audio - mantener el mismo audio del nivel
       } else {
-        // Quiz completado - agregar puntos de sesión al sistema global
+        // Quiz completado - marcar nivel como completado y desbloquear siguiente
+        const completedLevels = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+        if (!completedLevels.includes(level)) {
+          completedLevels.push(level);
+          localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
+        }
+
+        // Agregar puntos de sesión al sistema global
         addPoints(sessionPoints);
         localStorage.removeItem('listeningSessionPoints');
         onComplete(sessionPoints);
@@ -242,15 +528,15 @@ const ListeningGame = ({
       <div className="listening-game-container">
         <header className="listening-game-header" role="banner">
           <div className="header-logo">
-            <img 
-              src="logo_app.svg" 
-              alt="English Club - Listening game application" 
+            <img
+              src="logo_app.svg"
+              alt="English Club - Listening game application"
               className="header-logo-img"
               role="img"
               tabIndex={0}
             />
           </div>
-          <h1 className="listening-game-title">LISTENING</h1>
+          <h1 className="listening-game-title">LISTENING - LEVEL {level}</h1>
           <div className="user-profile">
             <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
               <span className="profile-icon" aria-hidden="true">👤</span>
@@ -261,17 +547,17 @@ const ListeningGame = ({
         <main className="listening-game-content" role="main">
           <section className="game-stats" aria-labelledby="final-stats-heading">
             <h2 id="final-stats-heading" className="sr-only">Final game statistics</h2>
-            
+
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="star-icon" aria-hidden="true" role="img">⭐</span>
               <span className="score-text" aria-label={`Final points: ${points + sessionPoints} points`}>POINTS {points + sessionPoints}</span>
             </div>
-            
+
             <div className="question-counter" tabIndex={0}>
               <h3>Question</h3>
               <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
             </div>
-            
+
             <div className="lives-display" role="status" aria-label="No lives remaining" tabIndex={0}>
               {Array.from({ length: 3 }, (_, index) => (
                 <span key={index} className="heart inactive" aria-hidden="true" role="img">
@@ -286,9 +572,9 @@ const ListeningGame = ({
               <h2 id="game-over-title" className="game-over-title">GAME OVER</h2>
               <p id="game-over-message" className="game-over-message">You have no lives left!</p>
               <div className="crying-emoji" aria-hidden="true" role="img">😭</div>
-              
-              <button 
-                className="restart-button" 
+
+              <button
+                className="restart-button"
                 onClick={handleRestart}
                 onKeyDown={(e) => handleKeyDown(e, handleRestart)}
                 aria-label="Restart the listening exercise"
@@ -308,15 +594,15 @@ const ListeningGame = ({
     <div className="listening-game-container">
       <header className="listening-game-header" role="banner">
         <div className="header-logo">
-          <img 
-            src="logo_app.svg" 
-            alt="English Club - Listening game application" 
+          <img
+            src="logo_app.svg"
+            alt="English Club - Listening game application"
             className="header-logo-img"
             role="img"
             tabIndex={0}
           />
         </div>
-        <h1 className="listening-game-title">LISTENING</h1>
+        <h1 className="listening-game-title">LISTENING - LEVEL {level}</h1>
         <div className="user-profile">
           <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
             <span className="profile-icon" aria-hidden="true">👤</span>
@@ -327,12 +613,12 @@ const ListeningGame = ({
       <main className="listening-game-content" role="main">
         <section className="game-stats" aria-labelledby="game-stats-heading">
           <h2 id="game-stats-heading" className="sr-only">Current game statistics</h2>
-          
+
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
             <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
           </div>
-          
+
           <div className="question-counter" tabIndex={0}>
             <h3>Question</h3>
             <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
@@ -340,8 +626,8 @@ const ListeningGame = ({
 
           <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
             {Array.from({ length: 3 }, (_, index) => (
-              <span 
-                key={index} 
+              <span
+                key={index}
                 className={`heart ${index < lives ? 'active' : 'inactive'}`}
                 aria-hidden="true"
                 role="img"
@@ -354,10 +640,10 @@ const ListeningGame = ({
 
         <section className="question-container2" aria-labelledby="current-question-heading">
           <h2 id="current-question-heading" className="sr-only">Listening exercise question</h2>
-          
+
           <div className="audio-player" role="group" aria-labelledby="audio-controls">
             <h3 id="audio-controls" className="sr-only">Audio player controls</h3>
-            
+
             <audio
               ref={audioRef}
               onTimeUpdate={handleTimeUpdate}
@@ -365,7 +651,7 @@ const ListeningGame = ({
               onEnded={() => setIsPlaying(false)}
               preload="metadata"
             >
-              <source src={currentQ.audioSrc} type="audio/mpeg" />
+              <source src={currentLevelData.audioSrc} type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
 
@@ -427,7 +713,7 @@ const ListeningGame = ({
             {currentQ.options.map((option, index) => {
               let buttonClass = 'answer-option';
               let ariaLabel = option;
-              
+
               if (showResult) {
                 if (option === currentQ.correctAnswer) {
                   buttonClass += ' correct';
@@ -461,8 +747,8 @@ const ListeningGame = ({
         </section>
 
         <nav className="game-buttons" aria-label="Game navigation">
-          <button 
-            onClick={onBack} 
+          <button
+            onClick={onBack}
             onKeyDown={(e) => handleKeyDown(e, onBack)}
             className="back-button"
             aria-label="Go back to level selection"
@@ -470,8 +756,8 @@ const ListeningGame = ({
           >
             Back
           </button>
-          <button 
-            onClick={handleNext} 
+          <button
+            onClick={handleNext}
             onKeyDown={(e) => handleKeyDown(e, handleNext)}
             className="next-button"
             disabled={!selectedAnswer && !showResult}

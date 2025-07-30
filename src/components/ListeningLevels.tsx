@@ -10,11 +10,18 @@ interface ListeningLevelsProps {
 const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps) => {
   const { points } = usePoints();
   const [sessionPoints, setSessionPoints] = useState(0);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
 
   // Cargar puntos de sesión de listening desde localStorage
   useEffect(() => {
     const savedSessionPoints = localStorage.getItem('listeningSessionPoints');
     setSessionPoints(savedSessionPoints ? parseInt(savedSessionPoints) : 0);
+  }, []);
+
+  // Cargar niveles completados desde localStorage
+  useEffect(() => {
+    const savedCompletedLevels = localStorage.getItem('completedLevels');
+    setCompletedLevels(savedCompletedLevels ? JSON.parse(savedCompletedLevels) : []);
   }, []);
 
   const levels = [1, 2, 3, 4, 5, 6];
@@ -26,8 +33,21 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps
     }
   };
 
+  // Función para determinar si un nivel está disponible
+  const isLevelAvailable = (level: number) => {
+    if (level === 1) return true; // El primer nivel siempre está disponible
+    
+    // Un nivel está disponible si el nivel anterior ha sido completado
+    return completedLevels.includes(level - 1);
+  };
+
+  // Función para determinar si un nivel está completado
+  const isLevelCompleted = (level: number) => {
+    return completedLevels.includes(level);
+  };
+
   const handleLevelSelect = (level: number) => {
-    if (level === 1) {
+    if (isLevelAvailable(level)) {
       onLevelSelect(level);
     }
   };
@@ -60,6 +80,11 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
             <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
           </div>
+
+          {/* Mostrar progreso de niveles completados */}
+          <div className="progress-section" tabIndex={0}>
+            <span className="progress-text">Progress: {completedLevels.length}/{levels.length} levels completed</span>
+          </div>
         </section>
 
         <section className="levels-section" aria-labelledby="levels-heading">
@@ -67,25 +92,50 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps
           
           <div className="levels-grid" role="grid" aria-label="Listening exercise levels">
             {levels.map((level) => {
-              const isAvailable = level === 1;
+              const isAvailable = isLevelAvailable(level);
+              const isCompleted = isLevelCompleted(level);
+              
+              let cardClass = 'level-card';
+              let statusIcon = '';
+              let statusText = '';
+              
+              if (isCompleted) {
+                cardClass += ' completed';
+                statusIcon = '✅';
+                statusText = 'Completed';
+              } else if (isAvailable) {
+                cardClass += ' available';
+                statusIcon = '🎯';
+                statusText = 'Available';
+              } else {
+                cardClass += ' locked';
+                statusIcon = '🔒';
+                statusText = 'Locked';
+              }
+
               const ariaLabel = isAvailable 
-                ? `Level ${level} - Available, click to start` 
-                : `Level ${level} - Locked, complete previous levels to unlock`;
+                ? `Level ${level} - ${statusText}, click to start` 
+                : `Level ${level} - ${statusText}, complete level ${level - 1} to unlock`;
 
               return (
                 <div
                   key={level}
-                  className={`level-card ${isAvailable ? 'available' : 'locked'}`}
+                  className={cardClass}
                   onClick={() => handleLevelSelect(level)}
                   onKeyDown={(e) => handleKeyDown(e, () => handleLevelSelect(level))}
                   role="gridcell"
                   tabIndex={0}
                   aria-label={ariaLabel}
                   aria-disabled={!isAvailable}
+                  style={{ cursor: isAvailable ? 'pointer' : 'not-allowed' }}
                 >
-                  <span className="level-number" aria-hidden="true">{level}</span>
+                  <div className="level-content">
+                    <span className="level-number" aria-hidden="true">{level}</span>
+                    <span className="level-status-icon" aria-hidden="true">{statusIcon}</span>
+                  </div>
+                  <span className="level-status-text">{statusText}</span>
                   <span className="sr-only">
-                    {isAvailable ? 'Available level' : 'Locked level'}
+                    {isCompleted ? 'Completed level' : isAvailable ? 'Available level' : 'Locked level'}
                   </span>
                 </div>
               );

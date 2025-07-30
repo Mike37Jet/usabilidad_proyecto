@@ -34,6 +34,150 @@
   width: 40px;
   height: 40px;
 }
+/* Estilos adicionales para el sistema de desbloqueo de niveles */
+
+.progress-section {
+  text-align: center;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.progress-text {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Estados de las tarjetas de nivel */
+.level-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  border-radius: 16px;
+  border: 2px solid;
+  padding: 16px;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+}
+
+.level-card.available {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
+  cursor: pointer;
+  transform: scale(1);
+}
+
+.level-card.available:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+  border-color: #66BB6A;
+}
+
+.level-card.completed {
+  border-color: #2196F3;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(33, 150, 243, 0.1));
+  cursor: pointer;
+  transform: scale(1);
+}
+
+.level-card.completed:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+  border-color: #42A5F5;
+}
+
+.level-card.locked {
+  border-color: #757575;
+  background: linear-gradient(135deg, rgba(117, 117, 117, 0.1), rgba(117, 117, 117, 0.05));
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.level-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.level-number {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.level-status-icon {
+  font-size: 24px;
+}
+
+.level-status-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* Efectos de hover mejorados */
+.level-card.available:focus,
+.level-card.completed:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.level-card.locked:focus {
+  outline: 3px solid rgba(117, 117, 117, 0.5);
+  outline-offset: 2px;
+}
+
+/* Animaciones adicionales */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.level-card.available {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.level-card.available:hover {
+  animation: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .level-card {
+    min-height: 100px;
+    padding: 12px;
+  }
+  
+  .level-number {
+    font-size: 24px;
+  }
+  
+  .level-status-icon {
+    font-size: 20px;
+  }
+  
+  .level-status-text {
+    font-size: 11px;
+  }
+}
 
 .profile-avatar {
   width: 40px;
