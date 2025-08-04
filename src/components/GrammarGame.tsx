@@ -4,6 +4,12 @@ import './GrammarGame.css';
 
 interface GrammarGameProps {
   level: number;
+  videoQuestions: Array<{
+    question: string;
+    options: string[];
+    correctAnswer: string;
+  }>;
+  videoTitle: string;
   onBack: () => void;
   onComplete: (score: number) => void;
 }
@@ -17,7 +23,7 @@ interface Question {
   word?: string;
 }
 
-const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
+const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: GrammarGameProps) => {
   const { points, addPoints } = usePoints();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [sessionPoints, setSessionPoints] = useState(0);
@@ -31,59 +37,21 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
 
+  // Convertir las preguntas del video al formato requerido
+  const questions: Question[] = videoQuestions.map((q, index) => {
+    const correctIndex = q.options.findIndex(option => option === q.correctAnswer);
+    return {
+      id: index + 1,
+      question: q.question,
+      options: q.options,
+      correctAnswer: correctIndex,
+      type: 'multiple-choice' as const
+    };
+  });
+
   const getCurrentHangmanWord = () => {
     return currentQ.word || 'SPELL';
   };
-
-  const questions: Question[] = [
-    {
-      id: 1,
-      question: "Complete the sentence: By next year, I ___ my studies.",
-      options: ["will have finished", "will finish", "have finished", "will be finishing"],
-      correctAnswer: 0,
-      type: 'multiple-choice'
-    },
-    {
-      id: 2,
-      question: "",
-      options: [],
-      correctAnswer: 0,
-      type: 'hangman',
-      word: 'FINISHED'
-    },
-    {
-      id: 3,
-      question: "Which is the correct negative form?",
-      options: [
-        "She will not have completed the project",
-        "She will not complete the project", 
-        "She has not completed the project",
-        "She will not completing the project"
-      ],
-      correctAnswer: 0,
-      type: 'multiple-choice'
-    },
-    {
-      id: 4,
-      question: "",
-      options: [],
-      correctAnswer: 0,
-      type: 'hangman',
-      word: 'COMPLETED'
-    },
-    {
-      id: 5,
-      question: "Which is the correct interrogative form?",
-      options: [
-        "Will you have studied English by tomorrow?",
-        "Will you study English by tomorrow?",
-        "Have you studied English by tomorrow?",
-        "Are you studying English by tomorrow?"
-      ],
-      correctAnswer: 0,
-      type: 'multiple-choice'
-    }
-  ];
 
   const alphabet = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
@@ -93,7 +61,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
 
   const currentQ = questions[currentQuestion];
 
-  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+  const handleKeyDown = (e: any, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       action();
@@ -202,6 +170,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
             />
           </div>
           <h1 className="grammar-game-title">GRAMMAR</h1>
+          <h2 className="video-title">{videoTitle}</h2>
           <div className="user-profile">
             <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
               <span className="profile-icon" aria-hidden="true">👤</span>
@@ -333,6 +302,7 @@ const GrammarGame = ({ level, onBack, onComplete }: GrammarGameProps) => {
           />
         </div>
         <h1 className="grammar-game-title">GRAMMAR</h1>
+        <h2 className="video-title">{videoTitle}</h2>
         <div className="user-profile">
           <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
             <span className="profile-icon" aria-hidden="true">👤</span>
