@@ -12,6 +12,7 @@ interface GrammarGameProps {
   videoTitle: string;
   onBack: () => void;
   onComplete: (score: number) => void;
+  onBackToCategories: () => void;
 }
 
 interface Question {
@@ -23,8 +24,8 @@ interface Question {
   word?: string;
 }
 
-const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: GrammarGameProps) => {
-  const { points, addPoints } = usePoints();
+const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, onBackToCategories }: GrammarGameProps) => {
+  const { points, addCategoryPoints } = usePoints();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [sessionPoints, setSessionPoints] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -139,6 +140,8 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
         setLives(newLives);
         
         if (newLives <= 0) {
+          // Guardar puntos parciales antes del game over
+          addCategoryPoints('grammar', sessionPoints);
           setTimeout(() => {
             setGameOver(true);
           }, 1500);
@@ -159,6 +162,8 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
+          // Guardar puntos parciales antes del game over
+          addCategoryPoints('grammar', sessionPoints);
           setTimeout(() => {
             setGameOver(true);
           }, 1500);
@@ -177,7 +182,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
       setSelectedLetters([]);
     } else {
       // Quiz completado - agregar puntos de sesión al sistema global
-      addPoints(sessionPoints);
+      addCategoryPoints('grammar', sessionPoints);
       setGameCompleted(true);
       onComplete(sessionPoints);
     }
@@ -224,7 +229,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
             
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Final points: ${points + sessionPoints} points`}>POINTS {points + sessionPoints}</span>
+              <span className="score-text" aria-label={`Final points: ${sessionPoints} points`}>POINTS {sessionPoints}</span>
             </div>
             
             <div className="question-info2" tabIndex={0}>
@@ -268,6 +273,16 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
                 autoFocus
               >
                 Start again
+              </button>
+              
+              <button 
+                className="back-to-categories-button" 
+                onClick={onBackToCategories}
+                onKeyDown={(e) => handleKeyDown(e, onBackToCategories)}
+                aria-label="Go back to categories selection"
+                tabIndex={0}
+              >
+                Back to Categories
               </button>
             </div>
           </section>
@@ -356,7 +371,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
           
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
+            <span className="score-text" aria-label={`Current points: ${sessionPoints} points`}>Points: {sessionPoints}</span>
           </div>
           
           <div className="question-info2" tabIndex={0}>

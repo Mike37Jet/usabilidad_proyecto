@@ -6,14 +6,16 @@ interface ListeningGameProps {
   level: number;
   onBack: () => void;
   onComplete: (score: number) => void;
+  onBackToCategories: () => void;
 }
 
 const ListeningGame = ({
   level,
   onBack,
-  onComplete
+  onComplete,
+  onBackToCategories
 }: ListeningGameProps) => {
-  const { points, addPoints } = usePoints();
+  const { points, addCategoryPoints } = usePoints();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [sessionPoints, setSessionPoints] = useState(0);
   const [lives, setLives] = useState(3);
@@ -498,7 +500,7 @@ const ListeningGame = ({
         }
 
         // Agregar puntos de sesión al sistema global
-        addPoints(sessionPoints);
+        addCategoryPoints('listening', sessionPoints);
         localStorage.removeItem('listeningSessionPoints');
         onComplete(sessionPoints);
       }
@@ -512,6 +514,8 @@ const ListeningGame = ({
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
+          // Guardar puntos parciales antes del game over
+          addCategoryPoints('listening', sessionPoints);
           setTimeout(() => {
             setGameOver(true);
           }, 1500);
@@ -550,7 +554,7 @@ const ListeningGame = ({
 
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Final points: ${points + sessionPoints} points`}>POINTS {points + sessionPoints}</span>
+              <span className="score-text" aria-label={`Final points: ${sessionPoints} points`}>POINTS {sessionPoints}</span>
             </div>
 
             <div className="question-counter" tabIndex={0}>
@@ -582,6 +586,16 @@ const ListeningGame = ({
                 autoFocus
               >
                 Start Again
+              </button>
+
+              <button
+                className="back-to-categories-button"
+                onClick={onBackToCategories}
+                onKeyDown={(e) => handleKeyDown(e, onBackToCategories)}
+                aria-label="Go back to categories selection"
+                tabIndex={0}
+              >
+                Back to Categories
               </button>
             </div>
           </section>
@@ -616,7 +630,7 @@ const ListeningGame = ({
 
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current points: ${points + sessionPoints} points`}>Points: {points + sessionPoints}</span>
+            <span className="score-text" aria-label={`Current points: ${sessionPoints} points`}>Points: {sessionPoints}</span>
           </div>
 
           <div className="question-counter" tabIndex={0}>

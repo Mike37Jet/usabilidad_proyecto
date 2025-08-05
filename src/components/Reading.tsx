@@ -4,10 +4,11 @@ import './Reading.css';
 
 interface ReadingProps {
   onBack: () => void;
+  onBackToCategories: () => void;
 }
 
-const Reading = ({ onBack }: ReadingProps) => {
-  const { points, addPoints } = usePoints();
+const Reading = ({ onBack, onBackToCategories }: ReadingProps) => {
+  const { points, addCategoryPoints } = usePoints();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isQuizMode, setIsQuizMode] = useState(false);
@@ -286,8 +287,8 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         setShowResult(false);
       } else {
         // Quiz completado - agregar puntos totales al sistema global
-        addPoints(sessionScore);
-        alert(`Quiz completed! You earned ${sessionScore} points! Total points: ${points + sessionScore}`);
+        addCategoryPoints('reading', sessionScore);
+        alert(`Quiz completed! You earned ${sessionScore} points!`);
         handleRestart();
       }
     } else if (isQuizMode && selectedAnswer) {
@@ -301,6 +302,8 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
+          // Guardar puntos parciales antes del game over
+          addCategoryPoints('reading', sessionScore);
           setTimeout(() => {
             setGameOver(true);
           }, 1500);
@@ -355,7 +358,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
             
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="score-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Current points: ${points + sessionScore} points`}>Points: {points + sessionScore}</span>
+              <span className="score-text" aria-label={`Current points: ${sessionScore} points`}>Points: {sessionScore}</span>
             </div>
             
             <div className="question-counter" tabIndex={0}>
@@ -543,7 +546,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
             
             <div className="score-display" role="status" aria-live="polite">
               <span className="score-icon" aria-hidden="true">⭐</span>
-              <span className="score-text" aria-label={`Final points: ${points + sessionScore} points`}>POINTS {points + sessionScore}</span>
+              <span className="score-text" aria-label={`Final points: ${sessionScore} points`}>POINTS {sessionScore}</span>
             </div>
             
             <div className="question-counter">
@@ -575,6 +578,16 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
                 autoFocus
               >
                 Start Again
+              </button>
+
+              <button 
+                className="back-to-categories-button" 
+                onClick={onBackToCategories}
+                onKeyDown={(e) => handleKeyDown(e, onBackToCategories)}
+                aria-label="Go back to categories selection"
+                tabIndex={0}
+              >
+                Back to Categories
               </button>
             </div>
           </section>

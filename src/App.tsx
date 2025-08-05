@@ -53,6 +53,11 @@ function App() {
     setCurrentState('dashboard');
   };
 
+  const handleBackToCategories = () => {
+    console.log('Back to Categories (Dashboard)');
+    setCurrentState('dashboard');
+  };
+
   const handleBackToListening = () => {
     console.log('Back to Listening');
     setCurrentState('listening');
@@ -107,7 +112,7 @@ function App() {
           />
         )}
         {currentState === 'reading' && (
-          <Reading onBack={handleBackToDashboard} />
+          <Reading onBack={handleBackToDashboard} onBackToCategories={handleBackToCategories} />
         )}
         {currentState === 'listening' && (
           <Listening 
@@ -132,6 +137,7 @@ function App() {
             level={selectedLevel}
             onBack={handleBackToListeningLevels}
             onComplete={handleGameComplete}
+            onBackToCategories={handleBackToCategories}
           />
         )}
         {currentState === 'grammarGame' && (
@@ -141,6 +147,7 @@ function App() {
             videoTitle={videoData.title}
             onBack={handleBackToGrammar}
             onComplete={handleGrammarGameComplete}
+            onBackToCategories={handleBackToCategories}
           />
         )}
       </div>

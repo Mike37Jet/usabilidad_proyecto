@@ -760,3 +760,36 @@
     font-size: 20px;
   }
 }
+
+/* Botón de volver a categorías */
+.back-to-categories-button {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.back-to-categories-button:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.back-to-categories-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
+}
+
+.back-to-categories-button:focus {
+  outline: 3px solid #80bdff;
+  outline-offset: 2px;
+}
