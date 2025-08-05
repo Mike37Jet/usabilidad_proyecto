@@ -27,6 +27,7 @@ const Reading = ({ onBack, onBackToCategories }: ReadingProps) => {
       title: "The Island That Vanished",
       description: "This short reading explores the strange case of Sandy Island—a landmass that appeared on maps for over 100 years but was later proven not to exist. The story raises questions about cartography, data accuracy, and how easily errors can persist even in a high-tech world.",
       tags: ["#Geography", "#ScienceMysteries", "#CriticalThinking", "#Exploration"],
+      image: "imagen_cuento.png", 
       fullText: `In the early 20th century, explorers charted a tiny island in the South Pacific, naming it Sandy Island. It appeared on nautical maps, was listed in scientific databases, and was even marked on Google Earth. However, in 2012, an Australian research team set out to study the island—only to discover that it didn't exist. When they arrived at the coordinates, all they found was open ocean. The mystery raised questions about how a nonexistent landmass could survive in official records for over a century.
 
 Some believe the island's presence was the result of a cartographic mistake—perhaps a floating mass of pumice mistaken for land, or a simple error copied from one map to another over decades. Others speculate that it was a deliberate "trap street," a fictional location inserted by mapmakers to catch plagiarists. Regardless of the cause, the incident reminded the world that even in the digital age, not all information is accurate.
@@ -89,6 +90,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
       title: "The Digital Paradox",
       description: "A thought-provoking story about Maya, a brilliant programmer who discovers that technology meant to connect us might actually be isolating us. This B2-level story explores complex themes of modern society, human connection, and the unexpected consequences of technological advancement.",
       tags: ["#Technology", "#SocialIssues", "#Philosophy", "#ModernLife"],
+      image: "Maya.png", // Cambia por la imagen que quieras para esta historia
       fullText: `Maya had always believed that technology was humanity's greatest achievement. As a senior software engineer at one of the world's leading tech companies, she spent her days creating algorithms that connected millions of people across the globe. Her latest project was revolutionary—an AI-powered social platform that could predict and fulfill people's social needs before they even realized them.
 
 However, during a routine data analysis, Maya made a disturbing discovery. The platform she had helped create was not bringing people together as intended. Instead, it was subtly isolating them. The algorithm, in its quest to provide perfectly curated content, was creating digital echo chambers where users only encountered information that confirmed their existing beliefs. People were becoming increasingly polarized, unable to engage in meaningful dialogue with those who held different perspectives.
@@ -153,6 +155,7 @@ Faced with this revelation, Maya had to make a difficult choice. Should she expo
       title: "The Last Library",
       description: "In a near-future world where all knowledge has been digitized, Elena discovers the last physical library on Earth. This B2-level story examines the value of tradition, the nature of knowledge preservation, and what we might lose in our rush toward digitalization.",
       tags: ["#Future", "#Knowledge", "#Tradition", "#Society"],
+      image: "library.png",
       fullText: `In 2045, Elena stumbled upon something that shouldn't have existed—a physical library. The building stood forgotten in the old quarter of the city, its existence somehow overlooked by the Great Digitization Project that had converted all written knowledge into digital format decades earlier. Books, those archaic vessels of information, had been declared obsolete and systematically destroyed or recycled.
 
 As Elena pushed open the heavy wooden doors, she was overwhelmed by a sensation she had never experienced—the smell of aged paper and leather bindings. Thousands of books lined the shelves, their spines creating a rainbow of colors and textures that no holographic display could replicate. The elderly librarian, Marcus, had been the building's sole guardian for over twenty years, maintaining this secret repository of human knowledge.
@@ -648,8 +651,8 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
                 </div>
                 <div className="book-illustration">
                   <img 
-                    src="imagen_cuento.png" 
-                    alt="Illustration of Sandy Island mystery - A mysterious island that appeared on maps but didn't exist" 
+                    src={currentContent.image} 
+                    alt={`Illustration for ${currentContent.title}`} 
                     className="story-illustration"
                   />
                 </div>
