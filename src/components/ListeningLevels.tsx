@@ -5,38 +5,28 @@ import './ListeningLevels.css';
 interface ListeningLevelsProps {
   onNavigateBack: () => void;
   onLevelSelect: (level: number) => void;
-  videoId: number;
 }
 
-const ListeningLevels = ({ onNavigateBack, onLevelSelect, videoId }: ListeningLevelsProps) => {
+const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps) => {
   const { points } = usePoints();
   const [sessionPoints, setSessionPoints] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
 
-  // Cargar puntos de sesión de listening desde localStorage (específico por video)
+  // Cargar puntos de sesión de listening desde localStorage
   useEffect(() => {
-    const savedSessionPoints = localStorage.getItem(`listeningSessionPoints_video${videoId}`);
+    const savedSessionPoints = localStorage.getItem('listeningSessionPoints');
     setSessionPoints(savedSessionPoints ? parseInt(savedSessionPoints) : 0);
-  }, [videoId]);
+  }, []);
 
-  // Cargar niveles completados desde localStorage (específico por video)
+  // Cargar niveles completados desde localStorage
   useEffect(() => {
-    const savedCompletedLevels = localStorage.getItem(`completedLevels_video${videoId}`);
+    const savedCompletedLevels = localStorage.getItem('completedLevels');
     setCompletedLevels(savedCompletedLevels ? JSON.parse(savedCompletedLevels) : []);
-  }, [videoId]);
+  }, []);
 
   const levels = [1, 2, 3, 4, 5, 6];
 
-  // Información de los videos (copiada del componente Listening)
-  const videoInfo = {
-    1: { title: "Past Simple in TV Series", color: "#4CAF50" },
-    2: { title: "Grammar in Context", color: "#2196F3" },
-    3: { title: "Real-Life Conversations", color: "#FF9800" }
-  };
-
-  const currentVideoInfo = videoInfo[videoId as keyof typeof videoInfo] || videoInfo[1];
-
-  const handleKeyDown = (e: any, action: () => void) => {
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       action();
@@ -74,7 +64,7 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect, videoId }: ListeningLe
             tabIndex={0}
           />
         </div>
-        <h1 className="listening-levels-title">LISTENING - {currentVideoInfo.title}</h1>
+        <h1 className="listening-levels-title">LISTENING</h1>
         <div className="user-profile">
           <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
             <span className="profile-icon" aria-hidden="true">👤</span>
@@ -137,20 +127,10 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect, videoId }: ListeningLe
                   tabIndex={0}
                   aria-label={ariaLabel}
                   aria-disabled={!isAvailable}
-                  style={{ 
-                    cursor: isAvailable ? 'pointer' : 'not-allowed',
-                    borderColor: isAvailable ? currentVideoInfo.color : undefined,
-                    backgroundColor: isCompleted ? currentVideoInfo.color + '20' : undefined
-                  }}
+                  style={{ cursor: isAvailable ? 'pointer' : 'not-allowed' }}
                 >
                   <div className="level-content">
-                    <span 
-                      className="level-number" 
-                      aria-hidden="true"
-                      style={{ color: isAvailable ? currentVideoInfo.color : undefined }}
-                    >
-                      {level}
-                    </span>
+                    <span className="level-number" aria-hidden="true">{level}</span>
                     <span className="level-status-icon" aria-hidden="true">{statusIcon}</span>
                   </div>
                   <span className="level-status-text">{statusText}</span>
@@ -171,9 +151,8 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect, videoId }: ListeningLe
               className="back-button"
               aria-label="Go back to listening lesson"
               tabIndex={0}
-              style={{ backgroundColor: currentVideoInfo.color }}
             >
-              Back to Video Selection
+              Back
             </button>
           </div>
         </nav>

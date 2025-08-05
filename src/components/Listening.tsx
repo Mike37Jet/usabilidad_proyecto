@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import ListeningGame from './ListeningGame';
 import './Listening.css';
 
 interface ListeningProps {
   onNavigateBack: () => void;
-  onNavigateToLevels: (videoId: number) => void;
+  onNavigateToLevels: () => void;
 }
 
 const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
@@ -47,11 +48,7 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
   ];
 
   const handleLevelSelect = (levelId: number) => {
-    if (typeof onNavigateToLevels === 'function') {
-      onNavigateToLevels(levelId);
-    } else {
-      console.error('onNavigateToLevels is not a function. Received:', typeof onNavigateToLevels, onNavigateToLevels);
-    }
+    onNavigateToLevels();
   };
 
   const handleKeyDown = (e: any, action: () => void) => {
@@ -120,11 +117,9 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
               aria-label="Video player"
             >
               <iframe 
-                width="560" 
+                width="100%" 
                 height="315" 
-                src={currentSlide === 0 ? "https://www.youtube.com/embed/4cdGAM7W06A?si=T4v9nG7YjRSNI1Pu" : 
-                     currentSlide === 1 ? "https://www.youtube.com/embed/ObbTKxqHTkk?si=3lQCl4ib7aiXDoxk" : 
-                     "https://www.youtube.com/embed/97fxGkWqBCc?si=wy3epm--7p0Pa0dn"}
+                src={currentVideo.embedUrl}
                 title="YouTube video player" 
                 frameBorder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
