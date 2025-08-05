@@ -38,7 +38,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
   const [selectedLetters, setSelectedLetters] = useState([]);
 
   // Convertir las preguntas del video al formato requerido
-  const questions: Question[] = videoQuestions.map((q, index) => {
+  const questions: Question[] = (videoQuestions || []).map((q, index) => {
     const correctIndex = q.options.findIndex(option => option === q.correctAnswer);
     return {
       id: index + 1,
@@ -48,6 +48,26 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
       type: 'multiple-choice' as const
     };
   });
+
+  // Si no hay preguntas disponibles, mostrar mensaje de error
+  if (!videoQuestions || videoQuestions.length === 0 || questions.length === 0) {
+    return (
+      <div className="grammar-game-container">
+        <header className="grammar-game-header">
+          <h1>GRAMMAR GAME</h1>
+        </header>
+        <main className="grammar-game-content">
+          <div className="error-message">
+            <h2>No questions available</h2>
+            <p>There are no questions loaded for this lesson.</p>
+            <button onClick={onBack} className="back-button">
+              Go Back
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const getCurrentHangmanWord = () => {
     return currentQ.word || 'SPELL';
@@ -60,6 +80,26 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
   ];
 
   const currentQ = questions[currentQuestion];
+
+  // Validación adicional para currentQ
+  if (!currentQ) {
+    return (
+      <div className="grammar-game-container">
+        <header className="grammar-game-header">
+          <h1>GRAMMAR GAME</h1>
+        </header>
+        <main className="grammar-game-content">
+          <div className="error-message">
+            <h2>Question not found</h2>
+            <p>The current question could not be loaded.</p>
+            <button onClick={onBack} className="back-button">
+              Go Back
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const handleKeyDown = (e: any, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -419,7 +459,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete }: 
                 </div>
 
                 <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
-                  {currentQ.options.map((option, index) => {
+                  {(currentQ.options || []).map((option, index) => {
                     let buttonClass = 'answer-option';
                     let ariaLabel = option;
                     

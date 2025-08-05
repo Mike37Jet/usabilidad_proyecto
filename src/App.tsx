@@ -13,6 +13,10 @@ import ListeningGame from './components/ListeningGame.tsx';
 function App() {
   const [currentState, setCurrentState] = useState('login');
   const [selectedLevel, setSelectedLevel] = useState(1);
+  const [videoData, setVideoData] = useState({
+    questions: [],
+    title: ''
+  });
 
   const handleLoginSuccess = () => {
     console.log('Login successful');
@@ -71,8 +75,9 @@ function App() {
     setCurrentState('listeningLevels');
   };
 
-  const handleNavigateToGrammarGame = () => {
-    console.log('Navigating to Grammar Game');
+  const handleNavigateToGrammarGame = (videoData: { questions: any[], title: string }) => {
+    console.log('Navigating to Grammar Game', videoData);
+    setVideoData(videoData);
     setCurrentState('grammarGame');
   };
 
@@ -132,6 +137,8 @@ function App() {
         {currentState === 'grammarGame' && (
           <GrammarGame 
             level={selectedLevel}
+            videoQuestions={videoData.questions}
+            videoTitle={videoData.title}
             onBack={handleBackToGrammar}
             onComplete={handleGrammarGameComplete}
           />
