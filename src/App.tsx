@@ -13,7 +13,6 @@ import ListeningGame from './components/ListeningGame.tsx';
 function App() {
   const [currentState, setCurrentState] = useState('login');
   const [selectedLevel, setSelectedLevel] = useState(1);
-  const [selectedVideoId, setSelectedVideoId] = useState(1);
 
   const handleLoginSuccess = () => {
     console.log('Login successful');
@@ -40,9 +39,8 @@ function App() {
     setCurrentState('grammar');
   };
 
-  const handleNavigateToListeningLevels = (videoId: number) => {
-    console.log('Navigating to Listening Levels for video:', videoId);
-    setSelectedVideoId(videoId);
+  const handleNavigateToListeningLevels = () => {
+    console.log('Navigating to Listening Levels');
     setCurrentState('listeningLevels');
   };
 
@@ -78,15 +76,15 @@ function App() {
     setCurrentState('grammarGame');
   };
 
-  const handleBackToGrammar = () => {
-    console.log('Back to Grammar');
-    setCurrentState('grammar');
-  };
-
   const handleGrammarGameComplete = (score: number) => {
     console.log(`Grammar game completed with score: ${score}`);
     alert(`Congratulations! You earned ${score} points!`);
     setCurrentState('dashboard');
+  };
+
+  const handleBackToGrammar = () => {
+    console.log('Back to Grammar');
+    setCurrentState('grammar');
   };
 
   return (
@@ -122,7 +120,6 @@ function App() {
           <ListeningLevels 
             onNavigateBack={handleBackToListening}
             onLevelSelect={handleLevelSelect}
-            videoId={selectedVideoId}
           />
         )}
         {currentState === 'listeningGame' && (
