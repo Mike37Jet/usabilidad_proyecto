@@ -30,192 +30,62 @@ const Reading = ({ onBack }: ReadingProps) => {
 
 Some believe the island's presence was the result of a cartographic mistake—perhaps a floating mass of pumice mistaken for land, or a simple error copied from one map to another over decades. Others speculate that it was a deliberate "trap street," a fictional location inserted by mapmakers to catch plagiarists. Regardless of the cause, the incident reminded the world that even in the digital age, not all information is accurate.
 
-The case of Sandy Island reveals more than a mapping error; it underscores the importance of verifying data and the limits of human perception. In a world increasingly driven by satellite imagery and digital records, the disappearance of a fictional island serves as a strange yet powerful lesson: sometimes, the most reliable sources still need to be questioned.`,
-      questions: [
-        {
-          question: "What did the researchers find when they reached Sandy Island's coordinates?",
-          options: [
-            "A deserted beach",
-            "A large mass of pumice", 
-            "A military base",
-            "Open Ocean"
-          ],
-          correctAnswer: "Open Ocean"
-        },
-        {
-          question: "In what year did the Australian research team discover Sandy Island didn't exist?",
-          options: [
-            "2010",
-            "2011",
-            "2012",
-            "2013"
-          ],
-          correctAnswer: "2012"
-        },
-        {
-          question: "Where was Sandy Island supposedly located?",
-          options: [
-            "North Atlantic",
-            "South Pacific",
-            "Indian Ocean",
-            "Mediterranean Sea"
-          ],
-          correctAnswer: "South Pacific"
-        },
-        {
-          question: "What is a 'trap street' according to the text?",
-          options: [
-            "A street that leads nowhere",
-            "A fictional location to catch plagiarists",
-            "A dangerous road for drivers",
-            "A mapping error"
-          ],
-          correctAnswer: "A fictional location to catch plagiarists"
-        },
-        {
-          question: "How long did Sandy Island appear on maps before being proven false?",
-          options: [
-            "Over 50 years",
-            "Over 75 years",
-            "Over 100 years",
-            "Over 150 years"
-          ],
-          correctAnswer: "Over 100 years"
-        }
-      ]
-    },
-    {
-      title: "The Digital Paradox",
-      description: "A thought-provoking story about Maya, a brilliant programmer who discovers that technology meant to connect us might actually be isolating us. This B2-level story explores complex themes of modern society, human connection, and the unexpected consequences of technological advancement.",
-      tags: ["#Technology", "#SocialIssues", "#Philosophy", "#ModernLife"],
-      fullText: `Maya had always believed that technology was humanity's greatest achievement. As a senior software engineer at one of the world's leading tech companies, she spent her days creating algorithms that connected millions of people across the globe. Her latest project was revolutionary—an AI-powered social platform that could predict and fulfill people's social needs before they even realized them.
-
-However, during a routine data analysis, Maya made a disturbing discovery. The platform she had helped create was not bringing people together as intended. Instead, it was subtly isolating them. The algorithm, in its quest to provide perfectly curated content, was creating digital echo chambers where users only encountered information that confirmed their existing beliefs. People were becoming increasingly polarized, unable to engage in meaningful dialogue with those who held different perspectives.
-
-The irony wasn't lost on Maya. In trying to eliminate the discomfort of disagreement, the technology had eliminated the very friction that spurs growth and understanding. She realized that the messy, unpredictable nature of human interaction—the very thing technology sought to optimize—was actually essential for genuine connection and personal development.
-
-Faced with this revelation, Maya had to make a difficult choice. Should she expose the flaws in her creation, potentially destroying her career and the company she had devoted years to building? Or should she remain silent, allowing millions of users to continue living in their comfortable but limiting digital bubbles? The decision would not only define her future but also reflect her values about the role of technology in human society.`,
-      questions: [
-        {
-          question: "What was Maya's profession in the story?",
-          options: [
-            "Data analyst",
-            "Senior software engineer",
-            "Social media manager",
-            "AI researcher"
-          ],
-          correctAnswer: "Senior software engineer"
-        },
-        {
-          question: "What did Maya's AI-powered platform unintentionally create?",
-          options: [
-            "Better communication tools",
-            "Digital echo chambers",
-            "Advanced algorithms",
-            "Social connections"
-          ],
-          correctAnswer: "Digital echo chambers"
-        },
-        {
-          question: "According to the text, what was essential for genuine connection and personal development?",
-          options: [
-            "Perfect content curation",
-            "AI-powered platforms",
-            "Messy, unpredictable human interaction",
-            "Digital optimization"
-          ],
-          correctAnswer: "Messy, unpredictable human interaction"
-        },
-        {
-          question: "What dilemma did Maya face at the end of the story?",
-          options: [
-            "Whether to quit her job",
-            "Whether to expose the platform's flaws or remain silent",
-            "Whether to create a new algorithm",
-            "Whether to join a different company"
-          ],
-          correctAnswer: "Whether to expose the platform's flaws or remain silent"
-        },
-        {
-          question: "What effect did the algorithm's content curation have on users?",
-          options: [
-            "It made them more open-minded",
-            "It improved their social skills",
-            "It made them increasingly polarized",
-            "It helped them make new friends"
-          ],
-          correctAnswer: "It made them increasingly polarized"
-        }
-      ]
-    },
-    {
-      title: "The Last Library",
-      description: "In a near-future world where all knowledge has been digitized, Elena discovers the last physical library on Earth. This B2-level story examines the value of tradition, the nature of knowledge preservation, and what we might lose in our rush toward digitalization.",
-      tags: ["#Future", "#Knowledge", "#Tradition", "#Society"],
-      fullText: `In 2045, Elena stumbled upon something that shouldn't have existed—a physical library. The building stood forgotten in the old quarter of the city, its existence somehow overlooked by the Great Digitization Project that had converted all written knowledge into digital format decades earlier. Books, those archaic vessels of information, had been declared obsolete and systematically destroyed or recycled.
-
-As Elena pushed open the heavy wooden doors, she was overwhelmed by a sensation she had never experienced—the smell of aged paper and leather bindings. Thousands of books lined the shelves, their spines creating a rainbow of colors and textures that no holographic display could replicate. The elderly librarian, Marcus, had been the building's sole guardian for over twenty years, maintaining this secret repository of human knowledge.
-
-Marcus explained to Elena the subtle but significant differences between digital and physical reading. "When you read from a screen," he said, "you absorb information quickly, but your brain processes it differently. Physical books engage multiple senses—touch, smell, even the sound of turning pages. This multi-sensory experience creates deeper, more lasting memories and connections to the content."
-
-Elena spent weeks in the library, rediscovering the joy of unhurried reading, of serendipitous discoveries while browsing shelves, of the satisfying weight of a book in her hands. She began to understand what society had lost in its pursuit of efficiency and convenience. But when corporate investigators finally tracked down the library, Elena faced an impossible decision: help preserve this last bastion of traditional knowledge or watch it disappear forever, taking with it irreplaceable aspects of human learning and culture.`,
-      questions: [
-        {
-          question: "In what year does the story take place?",
-          options: [
-            "2040",
-            "2045",
-            "2050",
-            "2055"
-          ],
-          correctAnswer: "2045"
-        },
-        {
-          question: "What was the Great Digitization Project?",
-          options: [
-            "A program to build more libraries",
-            "A project that converted all written knowledge into digital format",
-            "A plan to create digital art",
-            "A system to teach digital literacy"
-          ],
-          correctAnswer: "A project that converted all written knowledge into digital format"
-        },
-        {
-          question: "Who was Marcus in the story?",
-          options: [
-            "Elena's teacher",
-            "A corporate investigator",
-            "The elderly librarian",
-            "A government official"
-          ],
-          correctAnswer: "The elderly librarian"
-        },
-        {
-          question: "According to Marcus, what advantage do physical books have over digital reading?",
-          options: [
-            "They are faster to read",
-            "They are more convenient",
-            "They engage multiple senses and create deeper memories",
-            "They take up less space"
-          ],
-          correctAnswer: "They engage multiple senses and create deeper memories"
-        },
-        {
-          question: "What decision did Elena face at the end of the story?",
-          options: [
-            "Whether to become a librarian",
-            "Whether to help preserve the library or let it disappear",
-            "Whether to report Marcus to authorities",
-            "Whether to digitize the remaining books"
-          ],
-          correctAnswer: "Whether to help preserve the library or let it disappear"
-        }
-      ]
+The case of Sandy Island reveals more than a mapping error; it underscores the importance of verifying data and the limits of human perception. In a world increasingly driven by satellite imagery and digital records, the disappearance of a fictional island serves as a strange yet powerful lesson: sometimes, the most reliable sources still need to be questioned.`
     }
   ];
 
-  // Obtener las preguntas de la historia actual
-  const questions = readingContent[currentSlide]?.questions || [];
+  const questions = [
+    {
+      question: "What did the researchers find when they reached Sandy Island's coordinates?",
+      options: [
+        "A deserted beach",
+        "A large mass of pumice", 
+        "A military base",
+        "Open Ocean"
+      ],
+      correctAnswer: "Open Ocean"
+    },
+    {
+      question: "In what year did the Australian research team discover Sandy Island didn't exist?",
+      options: [
+        "2010",
+        "2011",
+        "2012",
+        "2013"
+      ],
+      correctAnswer: "2012"
+    },
+    {
+      question: "Where was Sandy Island supposedly located?",
+      options: [
+        "North Atlantic",
+        "South Pacific",
+        "Indian Ocean",
+        "Mediterranean Sea"
+      ],
+      correctAnswer: "South Pacific"
+    },
+    {
+      question: "What is a 'trap street' according to the text?",
+      options: [
+        "A street that leads nowhere",
+        "A fictional location to catch plagiarists",
+        "A dangerous road for drivers",
+        "A mapping error"
+      ],
+      correctAnswer: "A fictional location to catch plagiarists"
+    },
+    {
+      question: "How long did Sandy Island appear on maps before being proven false?",
+      options: [
+        "Over 50 years",
+        "Over 75 years",
+        "Over 100 years",
+        "Over 150 years"
+      ],
+      correctAnswer: "Over 100 years"
+    }
+  ];
 
   // Efecto para el temporizador
   useEffect(() => {
@@ -237,7 +107,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
     };
   }, [isPlaying, isQuizMode, timeRemaining]);
 
-  const handleKeyDown = (e: any, action: () => void) => {
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       action();
