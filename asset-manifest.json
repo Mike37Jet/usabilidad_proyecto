@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/usabilidad_proyecto/static/css/main.6124d756.css",
+    "main.js": "/usabilidad_proyecto/static/js/main.6613cdc4.js",
+    "static/js/453.a04b3c68.chunk.js": "/usabilidad_proyecto/static/js/453.a04b3c68.chunk.js",
+    "index.html": "/usabilidad_proyecto/index.html",
+    "main.6124d756.css.map": "/usabilidad_proyecto/static/css/main.6124d756.css.map",
+    "main.6613cdc4.js.map": "/usabilidad_proyecto/static/js/main.6613cdc4.js.map",
+    "453.a04b3c68.chunk.js.map": "/usabilidad_proyecto/static/js/453.a04b3c68.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6124d756.css",
+    "static/js/main.6613cdc4.js"
+  ]
+}
