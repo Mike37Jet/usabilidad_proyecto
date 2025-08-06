@@ -28,21 +28,20 @@ const ListeningGame = ({
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Cargar puntos de sesión desde localStorage
+
   useEffect(() => {
     const savedSessionPoints = localStorage.getItem('listeningSessionPoints');
     setSessionPoints(savedSessionPoints ? parseInt(savedSessionPoints) : 0);
   }, []);
 
-  // Guardar puntos de sesión en localStorage cuando cambien
+
   useEffect(() => {
     localStorage.setItem('listeningSessionPoints', sessionPoints.toString());
   }, [sessionPoints]);
 
-  // Configuración de niveles - UN AUDIO POR NIVEL
   const levelData = {
     1: {
-      audioSrc: "/audio/level1_q1.mp3", // Un solo audio para todo el nivel 1
+      audioSrc: process.env.PUBLIC_URL + "/audio/level1_q1.mp3", 
       questions: [
         {
           question: "What does the speaker use to secure themselves to their sleeping bag in space?",
@@ -97,7 +96,7 @@ const ListeningGame = ({
       ]
     },
     2: {
-      audioSrc: "/audio/level2.mp3", // Un solo audio para todo el nivel 2
+      audioSrc: process.env.PUBLIC_URL + "/audio/level2.mp3", 
       questions: [
         {
           question: "According to the speaker, what is a problem with most video games?",
@@ -152,7 +151,7 @@ const ListeningGame = ({
       ]
     },
     3: {
-      audioSrc: "/audio/level3.mp3", // Un solo audio para todo el nivel 3
+      audioSrc: process.env.PUBLIC_URL + "/audio/level3.mp3", // Un solo audio para todo el nivel 3
       questions: [
         {
           question: "How does the speaker feel about working in Antarctica?",
@@ -207,7 +206,7 @@ const ListeningGame = ({
       ]
     },
     4: {
-      audioSrc: "/audio/level4.mp3",
+      audioSrc: process.env.PUBLIC_URL + "/audio/level4.mp3",
       questions: [
         {
           question: "What topic is the speaker discussing in this audio?",
@@ -262,7 +261,7 @@ const ListeningGame = ({
       ]
     },
     5: {
-      audioSrc: "/audio/level5.mp3",
+      audioSrc: process.env.PUBLIC_URL + "/audio/level5.mp3",
       questions: [
         {
           question: "What are Frank's feelings about driving?",
@@ -318,7 +317,7 @@ const ListeningGame = ({
     },
 
     6: {
-      audioSrc: "/audio/level6.mp3",
+      audioSrc: process.env.PUBLIC_URL + "/audio/level6.mp3",
       questions: [
         {
           question: "What is the speaker mainly talking about?",
@@ -490,23 +489,23 @@ const ListeningGame = ({
         setSelectedAnswer(null);
         setWrongAnswer(null);
         setShowResult(false);
-        // NO reiniciar el audio - mantener el mismo audio del nivel
+
       } else {
-        // Quiz completado - marcar nivel como completado y desbloquear siguiente
+
         const completedLevels = JSON.parse(localStorage.getItem('completedLevels') || '[]');
         if (!completedLevels.includes(level)) {
           completedLevels.push(level);
           localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
         }
 
-        // Agregar puntos de sesión al sistema global
+
         addCategoryPoints('listening', sessionPoints);
         localStorage.removeItem('listeningSessionPoints');
         onComplete(sessionPoints);
       }
     } else if (selectedAnswer) {
       if (selectedAnswer === currentQ.correctAnswer) {
-        const newSessionPoints = sessionPoints + 10; // 10 puntos por respuesta correcta
+        const newSessionPoints = sessionPoints + 10; 
         setSessionPoints(newSessionPoints);
         setWrongAnswer(null);
       } else {
@@ -514,7 +513,7 @@ const ListeningGame = ({
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
-          // Guardar puntos parciales antes del game over
+ 
           addCategoryPoints('listening', sessionPoints);
           setTimeout(() => {
             setGameOver(true);
@@ -526,14 +525,14 @@ const ListeningGame = ({
     }
   };
 
-  // Pantalla de Game Over
+
   if (gameOver) {
     return (
       <div className="listening-game-container">
         <header className="listening-game-header" role="banner">
           <div className="header-logo">
             <img
-              src="logo_app.svg"
+              src={process.env.PUBLIC_URL + "/logo_app.svg"}
               alt="English Club - Listening game application"
               className="header-logo-img"
               role="img"
@@ -609,7 +608,7 @@ const ListeningGame = ({
       <header className="listening-game-header" role="banner">
         <div className="header-logo">
           <img
-            src="logo_app.svg"
+            src={process.env.PUBLIC_URL + "/logo_app.svg"}
             alt="English Club - Listening game application"
             className="header-logo-img"
             role="img"

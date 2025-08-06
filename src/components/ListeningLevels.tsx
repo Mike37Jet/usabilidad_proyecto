@@ -57,7 +57,7 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps
       <header className="listening-levels-header" role="banner">
         <div className="header-logo">
           <img 
-            src="logo_app.svg" 
+            src={process.env.PUBLIC_URL + "/logo_app.svg"} 
             alt="English Club - Listening levels application" 
             className="header-logo-img"
             role="img"

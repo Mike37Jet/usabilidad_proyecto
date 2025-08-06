@@ -207,7 +207,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
         <header className="grammar-game-header" role="banner">
           <div className="header-logo">
             <img 
-              src="logo_app.svg" 
+              src={process.env.PUBLIC_URL + "/logo_app.svg"} 
               alt="English Club - Grammar game application" 
               className="header-logo-img"
               role="img"
@@ -349,7 +349,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
       <header className="grammar-game-header" role="banner">
         <div className="header-logo">
           <img 
-            src="logo_app.svg" 
+            src={process.env.PUBLIC_URL + "/logo_app.svg"} 
             alt="English Club - Grammar game application" 
             className="header-logo-img"
             role="img"

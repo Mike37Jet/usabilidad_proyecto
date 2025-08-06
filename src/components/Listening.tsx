@@ -65,7 +65,7 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
       <header className="listening-header" role="banner">
         <div className="header-logo">
           <img 
-            src="logo_app.svg" 
+            src={process.env.PUBLIC_URL + "/logo_app.svg"} 
             alt="English Club - Listening Exercises" 
             className="header-logo-img"
           />

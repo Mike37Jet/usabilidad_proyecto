@@ -44,7 +44,7 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
       <header className="dashboard-header" role="banner">
         <div className="header-logo">
           <img 
-            src="/logo_app.svg" 
+            src={process.env.PUBLIC_URL + "/logo_app.svg"} 
             alt="English Club - Basic English learning application" 
             className="header-logo-img"
             role="img"

@@ -27,7 +27,7 @@ const Reading = ({ onBack, onBackToCategories }: ReadingProps) => {
       title: "The Island That Vanished",
       description: "This short reading explores the strange case of Sandy Island—a landmass that appeared on maps for over 100 years but was later proven not to exist. The story raises questions about cartography, data accuracy, and how easily errors can persist even in a high-tech world.",
       tags: ["#Geography", "#ScienceMysteries", "#CriticalThinking", "#Exploration"],
-      image: "imagen_cuento.png", 
+      image: process.env.PUBLIC_URL + "/imagen_cuento.png", 
       fullText: `In the early 20th century, explorers charted a tiny island in the South Pacific, naming it Sandy Island. It appeared on nautical maps, was listed in scientific databases, and was even marked on Google Earth. However, in 2012, an Australian research team set out to study the island—only to discover that it didn't exist. When they arrived at the coordinates, all they found was open ocean. The mystery raised questions about how a nonexistent landmass could survive in official records for over a century.
 
 Some believe the island's presence was the result of a cartographic mistake—perhaps a floating mass of pumice mistaken for land, or a simple error copied from one map to another over decades. Others speculate that it was a deliberate "trap street," a fictional location inserted by mapmakers to catch plagiarists. Regardless of the cause, the incident reminded the world that even in the digital age, not all information is accurate.
@@ -155,7 +155,7 @@ Faced with this revelation, Maya had to make a difficult choice. Should she expo
       title: "The Last Library",
       description: "In a near-future world where all knowledge has been digitized, Elena discovers the last physical library on Earth. This B2-level story examines the value of tradition, the nature of knowledge preservation, and what we might lose in our rush toward digitalization.",
       tags: ["#Future", "#Knowledge", "#Tradition", "#Society"],
-      image: "library.png",
+      image: process.env.PUBLIC_URL + "/library.png",
       fullText: `In 2045, Elena stumbled upon something that shouldn't have existed—a physical library. The building stood forgotten in the old quarter of the city, its existence somehow overlooked by the Great Digitization Project that had converted all written knowledge into digital format decades earlier. Books, those archaic vessels of information, had been declared obsolete and systematically destroyed or recycled.
 
 As Elena pushed open the heavy wooden doors, she was overwhelmed by a sensation she had never experienced—the smell of aged paper and leather bindings. Thousands of books lined the shelves, their spines creating a rainbow of colors and textures that no holographic display could replicate. The elderly librarian, Marcus, had been the building's sole guardian for over twenty years, maintaining this secret repository of human knowledge.
@@ -340,7 +340,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         <header className="reading-header" role="banner">
           <div className="header-logo">
             <img 
-              src="logo_app.svg" 
+              src={process.env.PUBLIC_URL + "/logo_app.svg"} 
               alt="English Club - Reading exercise application" 
               className="header-logo-img"
               role="img"
@@ -456,7 +456,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         <header className="reading-header" role="banner">
           <div className="header-logo">
             <img 
-              src="logo_app.svg" 
+              src={process.env.PUBLIC_URL + "/logo_app.svg"} 
               alt="English Club - Reading exercise application" 
               className="header-logo-img"
               role="img"
@@ -528,7 +528,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         <header className="reading-header" role="banner">
           <div className="header-logo">
             <img 
-              src="logo_app.svg" 
+              src={process.env.PUBLIC_URL + "/logo_app.svg"} 
               alt="English Club - Reading exercise application" 
               className="header-logo-img"
               role="img"
@@ -605,7 +605,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
       <header className="reading-header" role="banner">
         <div className="header-logo">
           <img 
-            src="logo_app.svg" 
+            src={process.env.PUBLIC_URL + "/logo_app.svg"} 
             alt="English Club - Reading exercise application" 
             className="header-logo-img"
             role="img"

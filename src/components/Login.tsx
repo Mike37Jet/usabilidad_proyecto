@@ -77,7 +77,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
         <header className="logo-section">
           <div className="logo-container">
             <img 
-              src="/logo_app.svg" 
+              src={process.env.PUBLIC_URL + "/logo_app.svg"} 
               alt="English Club logo - English learning application" 
               className="app-logo"
               role="img"
