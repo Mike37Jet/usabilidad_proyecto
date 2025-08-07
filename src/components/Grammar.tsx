@@ -7,7 +7,7 @@ interface GrammarProps {
 }
 
 const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
-  // Atajo de teclado Ctrl+M para volver al menú principal
+
   React.useEffect(() => {
     const handleGlobalShortcut = (e: KeyboardEvent) => {
       if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
@@ -25,7 +25,7 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
   const timeoutRef = useRef(null);
   const lastMouseMoveRef = useRef(0);
 
-  // Datos de los 3 videos de gramática
+
   const grammarVideos = [
     {
       id: 1,
@@ -209,7 +209,7 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
     }
   ];
 
-  // Función para ocultar controles después de 3 segundos
+
   const hideControlsAfterDelay = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -220,7 +220,7 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
     }, 3000);
   }, []);
 
-  // Función mejorada para mostrar controles con throttling
+
   const showControlsTemporarily = () => {
     const now = Date.now();
     if (now - lastMouseMoveRef.current < 500) {

@@ -33,12 +33,11 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
   const [gameCompleted, setGameCompleted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  
-  // Preguntas para el juego del ahorcado y múltiple opción
+
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
 
-  // Convertir las preguntas del video al formato requerido
+
   const questions: Question[] = (videoQuestions || []).map((q, index) => {
     const correctIndex = q.options.findIndex(option => option === q.correctAnswer);
     return {
@@ -50,7 +49,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
     };
   });
 
-  // Si no hay preguntas disponibles, mostrar mensaje de error
+
   if (!videoQuestions || videoQuestions.length === 0 || questions.length === 0) {
     return (
       <div className="grammar-game-container">
@@ -82,7 +81,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
 
   const currentQ = questions[currentQuestion];
 
-  // Validación adicional para currentQ
+
   if (!currentQ) {
     return (
       <div className="grammar-game-container">
@@ -125,22 +124,22 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
         const newGuessedLetters = [...guessedLetters, letter];
         setGuessedLetters(newGuessedLetters);
         
-        // Verificar si la palabra está completa
+   
         const wordComplete = currentWord.split('').every(l => newGuessedLetters.includes(l));
         if (wordComplete) {
-          const newSessionPoints = sessionPoints + 10; // 10 puntos por palabra completada
+          const newSessionPoints = sessionPoints + 10; 
           setSessionPoints(newSessionPoints);
           setTimeout(() => {
             handleNext();
           }, 1500);
         }
       } else {
-        // Letra incorrecta
+
         const newLives = lives - 1;
         setLives(newLives);
         
         if (newLives <= 0) {
-          // Guardar puntos parciales antes del game over
+
           addCategoryPoints('grammar', sessionPoints);
           setTimeout(() => {
             setGameOver(true);
@@ -156,13 +155,13 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
       setShowResult(true);
       
       if (correct) {
-        const newSessionPoints = sessionPoints + 10; // 10 puntos por respuesta correcta
+        const newSessionPoints = sessionPoints + 10; 
         setSessionPoints(newSessionPoints);
       } else {
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
-          // Guardar puntos parciales antes del game over
+          
           addCategoryPoints('grammar', sessionPoints);
           setTimeout(() => {
             setGameOver(true);
@@ -173,7 +172,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
       return;
     }
 
-    // Avanzar a la siguiente pregunta
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
@@ -181,7 +180,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
       setGuessedLetters([]);
       setSelectedLetters([]);
     } else {
-      // Quiz completado - agregar puntos de sesión al sistema global
+
       addCategoryPoints('grammar', sessionPoints);
       setGameCompleted(true);
       onComplete(sessionPoints);
@@ -200,7 +199,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
     setSelectedLetters([]);
   };
 
-  // Pantalla de Game Over
+
   if (gameOver) {
     return (
       <div className="grammar-game-container">
@@ -449,7 +448,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
             </div>
           ) : (
             <div className="multiple-choice-game">
-              {/* Eliminado el contador de pregunta duplicado */}
+
               <div className="question-content">
                 <div className="question-text" id="current-question" tabIndex={0}>
                   {currentQ.question}

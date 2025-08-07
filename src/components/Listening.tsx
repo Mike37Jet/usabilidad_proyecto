@@ -8,7 +8,7 @@ interface ListeningProps {
 }
 
 const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
-  // Atajo de teclado Ctrl+M para volver al menú principal
+
   React.useEffect(() => {
     const handleGlobalShortcut = (e: KeyboardEvent) => {
       if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
@@ -23,7 +23,7 @@ const Listening = ({ onNavigateBack, onNavigateToLevels }: ListeningProps) => {
   }, [onNavigateBack]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Datos de los 3 videos de listening
+
   const listeningVideos = [
     {
       id: 1,

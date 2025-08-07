@@ -13,7 +13,7 @@ const Reading = ({ onBack, onBackToCategories }: ReadingProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [sessionScore, setSessionScore] = useState(0); // Puntos de la sesión actual
+  const [sessionScore, setSessionScore] = useState(0); 
   const [lives, setLives] = useState(3);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [wrongAnswer, setWrongAnswer] = useState(null);
@@ -22,7 +22,7 @@ const Reading = ({ onBack, onBackToCategories }: ReadingProps) => {
   const [timeRemaining, setTimeRemaining] = useState(300);
   const [totalTime] = useState(300);
 
-  // Atajo de teclado Ctrl+M para volver al menú principal
+
   React.useEffect(() => {
     const handleGlobalShortcut = (e: KeyboardEvent) => {
       if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
@@ -104,7 +104,7 @@ The case of Sandy Island reveals more than a mapping error; it underscores the i
       title: "The Digital Paradox",
       description: "A thought-provoking story about Maya, a brilliant programmer who discovers that technology meant to connect us might actually be isolating us. This B2-level story explores complex themes of modern society, human connection, and the unexpected consequences of technological advancement.",
       tags: ["#Technology", "#SocialIssues", "#Philosophy", "#ModernLife"],
-      image: "Maya.png", // Cambia por la imagen que quieras para esta historia
+      image: "Maya.png",
       fullText: `Maya had always believed that technology was humanity's greatest achievement. As a senior software engineer at one of the world's leading tech companies, she spent her days creating algorithms that connected millions of people across the globe. Her latest project was revolutionary—an AI-powered social platform that could predict and fulfill people's social needs before they even realized them.
 
 However, during a routine data analysis, Maya made a disturbing discovery. The platform she had helped create was not bringing people together as intended. Instead, it was subtly isolating them. The algorithm, in its quest to provide perfectly curated content, was creating digital echo chambers where users only encountered information that confirmed their existing beliefs. People were becoming increasingly polarized, unable to engage in meaningful dialogue with those who held different perspectives.
@@ -232,10 +232,10 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
     }
   ];
 
-  // Obtener las preguntas de la historia actual
+
   const questions = readingContent[currentSlide]?.questions || [];
 
-  // Efecto para el temporizador
+
   useEffect(() => {
     let interval: number;
     
@@ -303,7 +303,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         setWrongAnswer(null);
         setShowResult(false);
       } else {
-        // Quiz completado - agregar puntos totales al sistema global
+       
         addCategoryPoints('reading', sessionScore);
         alert(`Quiz completed! You earned ${sessionScore} points!`);
         handleRestart();
@@ -311,7 +311,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
     } else if (isQuizMode && selectedAnswer) {
       const currentQ = questions[currentQuestion];
       if (selectedAnswer === currentQ.correctAnswer) {
-        const newSessionScore = sessionScore + 10; // 10 puntos por respuesta correcta
+        const newSessionScore = sessionScore + 10; 
         setSessionScore(newSessionScore);
         setWrongAnswer(null);
       } else {
@@ -319,7 +319,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
         const newLives = lives - 1;
         setLives(newLives);
         if (newLives <= 0) {
-          // Guardar puntos parciales antes del game over
+       
           addCategoryPoints('reading', sessionScore);
           setTimeout(() => {
             setGameOver(true);
@@ -346,7 +346,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
   const progressPercentage = ((totalTime - timeRemaining) / totalTime) * 100;
   const currentContent = readingContent[currentSlide];
 
-  // Pantalla de preguntas (Quiz Mode)
+
   if (isQuizMode) {
     const currentQ = questions[currentQuestion];
     return (
@@ -470,7 +470,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
     );
   }
 
-  // Si está en modo de juego (lectura), mostrar la pantalla de lectura
+  
   if (isPlaying) {
     return (
       <div className="reading-container">
@@ -542,7 +542,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
     );
   }
 
-  // Pantalla de Game Over
+
   if (gameOver) {
     return (
       <div className="reading-container">
@@ -620,7 +620,7 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
     );
   }
 
-  // Pantalla de selección original
+ 
   return (
     <div className="reading-container">
       <header className="reading-header" role="banner">

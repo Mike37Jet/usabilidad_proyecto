@@ -6,7 +6,7 @@ interface LoginProps {
 }
 
 const Login = ({ onLoginSuccess }: LoginProps) => {
-  // Solo permite acceso con la cuenta específica
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Solo permite acceso con la cuenta específica
+
     if (email === 'rodrigo.haro@epn.edu.ec' && password === 'rodrigo123') {
       setIsLoading(true);
       await new Promise(resolve => setTimeout(resolve, 500));

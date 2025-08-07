@@ -8,7 +8,7 @@ interface ListeningLevelsProps {
 }
 
 const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps) => {
-  // Atajo de teclado Ctrl+M para volver al menú principal
+  
   React.useEffect(() => {
     const handleGlobalShortcut = (e: KeyboardEvent) => {
       if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
@@ -25,13 +25,13 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps
   const [sessionPoints, setSessionPoints] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
 
-  // Cargar puntos de sesión de listening desde localStorage
+ 
   useEffect(() => {
     const savedSessionPoints = localStorage.getItem('listeningSessionPoints');
     setSessionPoints(savedSessionPoints ? parseInt(savedSessionPoints) : 0);
   }, []);
 
-  // Cargar niveles completados desde localStorage
+
   useEffect(() => {
     const savedCompletedLevels = localStorage.getItem('completedLevels');
     setCompletedLevels(savedCompletedLevels ? JSON.parse(savedCompletedLevels) : []);
@@ -46,15 +46,15 @@ const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps
     }
   };
 
-  // Función para determinar si un nivel está disponible
+
   const isLevelAvailable = (level: number) => {
-    if (level === 1) return true; // El primer nivel siempre está disponible
+    if (level === 1) return true; 
     
-    // Un nivel está disponible si el nivel anterior ha sido completado
+   
     return completedLevels.includes(level - 1);
   };
 
-  // Función para determinar si un nivel está completado
+
   const isLevelCompleted = (level: number) => {
     return completedLevels.includes(level);
   };

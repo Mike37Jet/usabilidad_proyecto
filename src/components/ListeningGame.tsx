@@ -151,7 +151,7 @@ const ListeningGame = ({
       ]
     },
     3: {
-      audioSrc: process.env.PUBLIC_URL + "/audio/level3.mp3", // Un solo audio para todo el nivel 3
+      audioSrc: process.env.PUBLIC_URL + "/audio/level3.mp3", 
       questions: [
         {
           question: "How does the speaker feel about working in Antarctica?",
@@ -377,14 +377,14 @@ const ListeningGame = ({
   const questions = currentLevelData.questions;
   const currentQ = questions[currentQuestion];
 
-  // Cargar audio solo una vez por nivel (no cambiar entre preguntas)
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.load();
       setCurrentTime(0);
       setIsPlaying(false);
     }
-  }, [level]); // Solo cambiar cuando cambie el nivel, no la pregunta
+  }, [level]);
 
   const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {

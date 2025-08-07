@@ -40,7 +40,6 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
     }
   };
 
-  // Atajos de teclado globales
   React.useEffect(() => {
     const handleGlobalShortcut = (e: KeyboardEvent) => {
       if (e.ctrlKey && !e.shiftKey && !e.altKey) {
@@ -60,7 +59,7 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
     return () => {
       window.removeEventListener('keydown', handleGlobalShortcut);
     };
-  }, []);
+  }, [handleStartListening, handleStartReading, handleStartSpeaking]);
 
   return (
     <div className="dashboard-container">
@@ -70,7 +69,6 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
             src={process.env.PUBLIC_URL + "/logo_app.svg"} 
             alt="English Club - Basic English learning application" 
             className="header-logo-img"
-            role="img"
             tabIndex={0}
           />
         </div>
@@ -96,7 +94,7 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
             tabIndex={0}
             aria-label={`Points information: You have ${points} points`}
           >
-            <span className="score-icon" aria-hidden="true" role="img">🌟</span>
+            <span className="score-icon" aria-hidden="true">🌟</span>
             <span className="score-text">Points</span>
             <span className="score-number" aria-label={`You have ${points} points`}>{points}</span>
           </div>
@@ -106,7 +104,7 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
           <h2 id="activities-heading" className="sr-only">Available learning activities</h2>
           <div className="activities-grid" role="group">
             
-            <article className="activity-card reading-card3" role="article" tabIndex={0}>
+            <article className="activity-card reading-card3" tabIndex={0}>
               <div className="activity-icon" aria-hidden="true" role="img">
                 📖
               </div>
@@ -129,7 +127,7 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
               </div>
             </article>
 
-            <article className="activity-card grammar2-card" role="article" tabIndex={0}>
+            <article className="activity-card grammar2-card" tabIndex={0}>
               <div className="activity-icon" aria-hidden="true" role="img">
                 📝
               </div>
@@ -152,7 +150,7 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
               </div>
             </article>
 
-            <article className="activity-card reading2-card" role="article" tabIndex={0}>
+            <article className="activity-card reading2-card" tabIndex={0}>
               <div className="activity-icon" aria-hidden="true" role="img">
                 🎧
               </div>
