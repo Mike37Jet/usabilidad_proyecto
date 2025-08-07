@@ -10,6 +10,7 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNavigateToGrammar }: DashboardProps) => {
+
   const { points } = usePoints();
 
   const handleLogout = () => {
@@ -38,6 +39,28 @@ const Dashboard = ({ onLogout, onNavigateToReading, onNavigateToListening, onNav
       action();
     }
   };
+
+  // Atajos de teclado globales
+  React.useEffect(() => {
+    const handleGlobalShortcut = (e: KeyboardEvent) => {
+      if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+        if (e.key.toLowerCase() === 'r') {
+          e.preventDefault();
+          handleStartReading();
+        } else if (e.key.toLowerCase() === 'g') {
+          e.preventDefault();
+          handleStartSpeaking();
+        } else if (e.key.toLowerCase() === 'l') {
+          e.preventDefault();
+          handleStartListening();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleGlobalShortcut);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalShortcut);
+    };
+  }, []);
 
   return (
     <div className="dashboard-container">

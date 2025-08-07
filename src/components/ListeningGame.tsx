@@ -539,7 +539,7 @@ const ListeningGame = ({
               tabIndex={0}
             />
           </div>
-          <h1 className="listening-game-title">LISTENING - LEVEL {level}</h1>
+          <h1 className="listening-game-title" tabIndex={0}>LISTENING - LEVEL {level}</h1>
           <div className="user-profile">
             <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
               <span className="profile-icon" aria-hidden="true">👤</span>
@@ -549,18 +549,15 @@ const ListeningGame = ({
 
         <main className="listening-game-content" role="main">
           <section className="game-stats" aria-labelledby="final-stats-heading">
-            <h2 id="final-stats-heading" className="sr-only">Final game statistics</h2>
-
+            <h2 id="final-stats-heading" className="sr-only" tabIndex={0}>Final game statistics</h2>
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Final points: ${sessionPoints} points`}>POINTS {sessionPoints}</span>
+              <span className="score-text" aria-label={`Final points: ${sessionPoints} points`} tabIndex={0}>POINTS {sessionPoints}</span>
             </div>
-
             <div className="question-counter" tabIndex={0}>
-              <h3>Question</h3>
-              <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
+              <h3 tabIndex={0}>Question</h3>
+              <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`} tabIndex={0}>{currentQuestion + 1}/{questions.length}</p>
             </div>
-
             <div className="lives-display" role="status" aria-label="No lives remaining" tabIndex={0}>
               {Array.from({ length: 3 }, (_, index) => (
                 <span key={index} className="heart inactive" aria-hidden="true" role="img">
@@ -569,13 +566,11 @@ const ListeningGame = ({
               ))}
             </div>
           </section>
-
           <section className="game-over-container" role="dialog" aria-labelledby="game-over-title" aria-describedby="game-over-message">
             <div className="game-over-modal">
-              <h2 id="game-over-title" className="game-over-title">GAME OVER</h2>
-              <p id="game-over-message" className="game-over-message">You have no lives left!</p>
+              <h2 id="game-over-title" className="game-over-title" tabIndex={0}>GAME OVER</h2>
+              <p id="game-over-message" className="game-over-message" tabIndex={0}>You have no lives left!</p>
               <div className="crying-emoji" aria-hidden="true" role="img">😭</div>
-
               <button
                 className="restart-button"
                 onClick={handleRestart}
@@ -586,7 +581,6 @@ const ListeningGame = ({
               >
                 Start Again
               </button>
-
               <button
                 className="back-to-categories-button"
                 onClick={onBackToCategories}
@@ -606,16 +600,15 @@ const ListeningGame = ({
   return (
     <div className="listening-game-container">
       <header className="listening-game-header" role="banner">
-        <div className="header-logo">
+        <div className="header-logo" tabIndex={0}>
           <img
             src={process.env.PUBLIC_URL + "/logo_app.svg"}
             alt="English Club - Listening game application"
             className="header-logo-img"
             role="img"
-            tabIndex={0}
           />
         </div>
-        <h1 className="listening-game-title">LISTENING - LEVEL {level}</h1>
+        <h1 className="listening-game-title" tabIndex={0}>LISTENING - LEVEL {level}</h1>
         <div className="user-profile">
           <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
             <span className="profile-icon" aria-hidden="true">👤</span>
@@ -625,18 +618,15 @@ const ListeningGame = ({
 
       <main className="listening-game-content" role="main">
         <section className="game-stats" aria-labelledby="game-stats-heading">
-          <h2 id="game-stats-heading" className="sr-only">Current game statistics</h2>
-
+          <h2 id="game-stats-heading" className="sr-only" tabIndex={0}>Current game statistics</h2>
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current points: ${sessionPoints} points`}>Points: {sessionPoints}</span>
+            <span className="score-text" aria-label={`Current points: ${sessionPoints} points`} tabIndex={0}>Points: {sessionPoints}</span>
           </div>
-
           <div className="question-counter" tabIndex={0}>
-            <h3>Question</h3>
-            <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
+            <h3 tabIndex={0}>Question</h3>
+            <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`} tabIndex={0}>{currentQuestion + 1}/{questions.length}</p>
           </div>
-
           <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
             {Array.from({ length: 3 }, (_, index) => (
               <span
@@ -652,11 +642,9 @@ const ListeningGame = ({
         </section>
 
         <section className="question-container2" aria-labelledby="current-question-heading">
-          <h2 id="current-question-heading" className="sr-only">Listening exercise question</h2>
-
-          <div className="audio-player" role="group" aria-labelledby="audio-controls">
-            <h3 id="audio-controls" className="sr-only">Audio player controls</h3>
-
+          <h2 id="current-question-heading" className="sr-only" tabIndex={0}>Listening exercise question</h2>
+          <div className="audio-player" role="group" aria-labelledby="audio-controls" tabIndex={0}>
+            <h3 id="audio-controls" className="sr-only" tabIndex={0}>Audio player controls</h3>
             <audio
               ref={audioRef}
               onTimeUpdate={handleTimeUpdate}
@@ -667,7 +655,6 @@ const ListeningGame = ({
               <source src={currentLevelData.audioSrc} type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
-
             <div className="audio-controls" onKeyDown={handleAudioKeyDown} tabIndex={0}>
               <button
                 onClick={handlePlayPause}
@@ -677,11 +664,9 @@ const ListeningGame = ({
               >
                 {isPlaying ? '⏸️' : '▶️'}
               </button>
-
-              <div className="time-display" aria-live="polite">
+              <div className="time-display" aria-live="polite" tabIndex={0}>
                 {formatTime(currentTime)} / {formatTime(duration)}
               </div>
-
               <button
                 onClick={() => skipTime(-5)}
                 className="skip-btn"
@@ -690,7 +675,6 @@ const ListeningGame = ({
               >
                 ⏪
               </button>
-
               <button
                 onClick={() => skipTime(5)}
                 className="skip-btn"
@@ -700,7 +684,6 @@ const ListeningGame = ({
                 ⏩
               </button>
             </div>
-
             <div
               className="progress-bar"
               onClick={handleProgressClick}
@@ -717,16 +700,13 @@ const ListeningGame = ({
               ></div>
             </div>
           </div>
-
-          <div className="question-text" id="current-question">
+          <div className="question-text" id="current-question" tabIndex={0}>
             {currentQ.question}
           </div>
-
           <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
             {currentQ.options.map((option, index) => {
               let buttonClass = 'answer-option';
               let ariaLabel = option;
-
               if (showResult) {
                 if (option === currentQ.correctAnswer) {
                   buttonClass += ' correct';
@@ -739,7 +719,6 @@ const ListeningGame = ({
                 buttonClass += ' selected';
                 ariaLabel = `${option} - Selected`;
               }
-
               return (
                 <button
                   key={index}
@@ -758,7 +737,6 @@ const ListeningGame = ({
             })}
           </div>
         </section>
-
         <nav className="game-buttons" aria-label="Game navigation">
           <button
             onClick={onBack}

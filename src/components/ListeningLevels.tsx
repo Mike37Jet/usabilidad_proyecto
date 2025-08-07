@@ -8,6 +8,19 @@ interface ListeningLevelsProps {
 }
 
 const ListeningLevels = ({ onNavigateBack, onLevelSelect }: ListeningLevelsProps) => {
+  // Atajo de teclado Ctrl+M para volver al menú principal
+  React.useEffect(() => {
+    const handleGlobalShortcut = (e: KeyboardEvent) => {
+      if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        onNavigateBack();
+      }
+    };
+    window.addEventListener('keydown', handleGlobalShortcut);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalShortcut);
+    };
+  }, [onNavigateBack]);
   const { points } = usePoints();
   const [sessionPoints, setSessionPoints] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);

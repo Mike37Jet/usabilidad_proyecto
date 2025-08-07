@@ -7,6 +7,19 @@ interface GrammarProps {
 }
 
 const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
+  // Atajo de teclado Ctrl+M para volver al menú principal
+  React.useEffect(() => {
+    const handleGlobalShortcut = (e: KeyboardEvent) => {
+      if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        onNavigateBack();
+      }
+    };
+    window.addEventListener('keydown', handleGlobalShortcut);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalShortcut);
+    };
+  }, [onNavigateBack]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showControls, setShowControls] = useState(true);
   const timeoutRef = useRef(null);
@@ -246,7 +259,7 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
             tabIndex={0}
           />
         </div>
-        <h1 className="grammar-main-title">GRAMMAR</h1>
+        <h1 className="grammar-main-title" tabIndex={0}>GRAMMAR</h1>
         <div className="user-profile">
           <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
             <span className="profile-icon" aria-hidden="true">👤</span>
@@ -256,16 +269,16 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
 
       <main className="grammar-content" role="main">
         <article className="grammar-card">
-          <h2 className="lesson-title">{currentVideo.title}</h2>
+          <h2 className="lesson-title" tabIndex={0}>{currentVideo.title}</h2>
           
           <section className="video-description">
-            <p className="description-text">{currentVideo.description}</p>
+            <p className="description-text" tabIndex={0}>{currentVideo.description}</p>
             
             <div className="tags-section">
-              <h3>Grammar Topics:</h3>
+              <h3 tabIndex={0}>Grammar Topics:</h3>
               <div className="tags-container" role="list" aria-label="Grammar topics">
                 {currentVideo.tags.map((tag, index) => (
-                  <span key={index} className="tag" role="listitem">
+                  <span key={index} className="tag" role="listitem" tabIndex={0}>
                     {tag}
                   </span>
                 ))}
@@ -274,7 +287,7 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
           </section>
           
           <section className="video-container" aria-labelledby="video-heading">
-            <h3 id="video-heading" className="sr-only">Grammar lesson video</h3>
+            <h3 id="video-heading" className="sr-only" tabIndex={0}>Grammar lesson video</h3>
             
             <div 
               className="video-frame"
@@ -296,8 +309,8 @@ const Grammar = ({ onNavigateBack, onNavigateToLevels }: GrammarProps) => {
             </div>
 
             <div className="video-instructions" id="video-instructions">
-              <h4 className="sr-only">Video controls instructions</h4>
-              <p className="sr-only">
+              <h4 className="sr-only" tabIndex={0}>Video controls instructions</h4>
+              <p className="sr-only" tabIndex={0}>
                 Use YouTube player controls to play, pause, adjust volume, and enable captions.
                 Use Tab to navigate between controls.
               </p>

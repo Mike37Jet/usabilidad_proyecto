@@ -6,6 +6,7 @@ interface LoginProps {
 }
 
 const Login = ({ onLoginSuccess }: LoginProps) => {
+  // Solo permite acceso con la cuenta específica
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -34,19 +35,16 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    console.log('Login attempt:', { email, password });
-    
-    try {
-      // Successful login simulation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    // Solo permite acceso con la cuenta específica
+    if (email === 'rodrigo.haro@epn.edu.ec' && password === 'rodrigo123') {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 500));
       onLoginSuccess();
-    } catch (error) {
-      console.error('Login failed:', error);
-    } finally {
       setIsLoading(false);
+      return;
+    } else {
+      setErrors({ email: 'Invalid credentials', password: 'Invalid credentials' });
+      return;
     }
   };
 

@@ -22,6 +22,20 @@ const Reading = ({ onBack, onBackToCategories }: ReadingProps) => {
   const [timeRemaining, setTimeRemaining] = useState(300);
   const [totalTime] = useState(300);
 
+  // Atajo de teclado Ctrl+M para volver al menú principal
+  React.useEffect(() => {
+    const handleGlobalShortcut = (e: KeyboardEvent) => {
+      if (e.ctrlKey && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        onBack();
+      }
+    };
+    window.addEventListener('keydown', handleGlobalShortcut);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalShortcut);
+    };
+  }, [onBack]);
+
   const readingContent = [
     {
       title: "The Island That Vanished",
@@ -384,7 +398,14 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
           </section>
 
           <section className="question-container" aria-labelledby="current-question">
-            <h3 id="current-question" className="question-text">{currentQ.question}</h3>
+            <h3 
+              id="current-question" 
+              className="question-text"
+              tabIndex={0}
+              aria-label={`Pregunta ${currentQuestion + 1}: ${currentQ.question}`}
+            >
+              {currentQ.question}
+            </h3>
             
             <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
               {currentQ.options.map((option, index) => {
@@ -654,6 +675,8 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
                     src={currentContent.image} 
                     alt={`Illustration for ${currentContent.title}`} 
                     className="story-illustration"
+                    tabIndex={0}
+                    aria-label={`Imagen de la historia: ${currentContent.title}`}
                   />
                 </div>
               </div>
@@ -668,7 +691,13 @@ Elena spent weeks in the library, rediscovering the joy of unhurried reading, of
                 <h3>Learning Topics:</h3>
                 <div className="tags-container" role="list" aria-label="Story topics">
                   {currentContent.tags.map((tag, index) => (
-                    <span key={index} className="tag" role="listitem">
+                    <span 
+                      key={index} 
+                      className="tag" 
+                      role="listitem"
+                      tabIndex={0}
+                      aria-label={`Etiqueta de tema: ${tag}`}
+                    >
                       {tag}
                     </span>
                   ))}

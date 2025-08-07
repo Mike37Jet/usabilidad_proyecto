@@ -55,13 +55,13 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
     return (
       <div className="grammar-game-container">
         <header className="grammar-game-header">
-          <h1>GRAMMAR GAME</h1>
+          <h1 tabIndex={0}>GRAMMAR GAME</h1>
         </header>
         <main className="grammar-game-content">
           <div className="error-message">
-            <h2>No questions available</h2>
-            <p>There are no questions loaded for this lesson.</p>
-            <button onClick={onBack} className="back-button">
+            <h2 tabIndex={0}>No questions available</h2>
+            <p tabIndex={0}>There are no questions loaded for this lesson.</p>
+            <button onClick={onBack} className="back-button" tabIndex={0}>
               Go Back
             </button>
           </div>
@@ -87,13 +87,13 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
     return (
       <div className="grammar-game-container">
         <header className="grammar-game-header">
-          <h1>GRAMMAR GAME</h1>
+          <h1 tabIndex={0}>GRAMMAR GAME</h1>
         </header>
         <main className="grammar-game-content">
           <div className="error-message">
-            <h2>Question not found</h2>
-            <p>The current question could not be loaded.</p>
-            <button onClick={onBack} className="back-button">
+            <h2 tabIndex={0}>Question not found</h2>
+            <p tabIndex={0}>The current question could not be loaded.</p>
+            <button onClick={onBack} className="back-button" tabIndex={0}>
               Go Back
             </button>
           </div>
@@ -105,7 +105,7 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
   const handleKeyDown = (e: any, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      action();
+      action();     
     }
   };
 
@@ -214,8 +214,8 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
               tabIndex={0}
             />
           </div>
-          <h1 className="grammar-game-title">GRAMMAR</h1>
-          <h2 className="video-title">{videoTitle}</h2>
+          <h1 className="grammar-game-title" tabIndex={0}>GRAMMAR</h1>
+          <h2 className="video-title" tabIndex={0}>{videoTitle}</h2>
           <div className="user-profile">
             <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
               <span className="profile-icon" aria-hidden="true">👤</span>
@@ -225,18 +225,15 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
 
         <main className="grammar-game-content" role="main">
           <section className="game-stats" aria-labelledby="final-stats-heading">
-            <h2 id="final-stats-heading" className="sr-only">Final game statistics</h2>
-            
+            <h2 id="final-stats-heading" className="sr-only" tabIndex={0}>Final game statistics</h2>
             <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
               <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-              <span className="score-text" aria-label={`Final points: ${sessionPoints} points`}>POINTS {sessionPoints}</span>
+              <span className="score-text" aria-label={`Final points: ${sessionPoints} points`} tabIndex={0}>POINTS {sessionPoints}</span>
             </div>
-            
             <div className="question-info2" tabIndex={0}>
-              <h3>Level</h3>
-              <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`}>{currentQuestion + 1}/{questions.length}</p>
+              <h3 tabIndex={0}>Level</h3>
+              <p aria-label={`Question ${currentQuestion + 1} of ${questions.length}`} tabIndex={0}>{currentQuestion + 1}/{questions.length}</p>
             </div>
-
             <div className="lives-display" role="status" aria-label="No lives remaining" tabIndex={0}>
               {[...Array(3)].map((_, index) => (
                 <span key={index} className="heart inactive" aria-hidden="true" role="img">
@@ -248,12 +245,11 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
 
           <section className="game-over-container" role="dialog" aria-labelledby="game-over-title" aria-describedby="game-over-message">
             <div className="game-over-modal">
-              <h2 id="game-over-title" className="game-over-title">GAME OVER</h2>
-              <p id="game-over-message" className="game-over-message">You have no lives left!</p>
-              
+              <h2 id="game-over-title" className="game-over-title" tabIndex={0}>GAME OVER</h2>
+              <p id="game-over-message" className="game-over-message" tabIndex={0}>You have no lives left!</p>
               {currentQ.type === 'hangman' && (
                 <div className="game-over-hangman">
-                  <div className="game-over-word" aria-label={`The correct word was: ${getCurrentHangmanWord()}`}>
+                  <div className="game-over-word" aria-label={`The correct word was: ${getCurrentHangmanWord()}`} tabIndex={0}>
                     {getCurrentHangmanWord().split('').map((letter, index) => (
                       <span key={index} className="word-letter revealed">
                         {letter}
@@ -263,7 +259,6 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
                   <div className="crying-emoji" aria-hidden="true" role="img">😭</div>
                 </div>
               )}
-              
               <button 
                 className="restart-button" 
                 onClick={handleRestart}
@@ -274,7 +269,6 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
               >
                 Start again
               </button>
-              
               <button 
                 className="back-to-categories-button" 
                 onClick={onBackToCategories}
@@ -356,8 +350,8 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
             tabIndex={0}
           />
         </div>
-        <h1 className="grammar-game-title">GRAMMAR</h1>
-        <h2 className="video-title">{videoTitle}</h2>
+        <h1 className="grammar-game-title" tabIndex={0}>GRAMMAR</h1>
+        <h2 className="video-title" tabIndex={0}>{videoTitle}</h2>
         <div className="user-profile">
           <div className="profile-avatar" role="img" aria-label="User profile" tabIndex={0}>
             <span className="profile-icon" aria-hidden="true">👤</span>
@@ -367,20 +361,17 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
 
       <main className="grammar-game-content" role="main">
         <section className="game-stats" aria-labelledby="game-stats-heading">
-          <h2 id="game-stats-heading" className="sr-only">Current game statistics</h2>
-          
+          <h2 id="game-stats-heading" className="sr-only" tabIndex={0}>Current game statistics</h2>
           <div className="score-display" role="status" aria-live="polite" tabIndex={0}>
             <span className="star-icon" aria-hidden="true" role="img">⭐</span>
-            <span className="score-text" aria-label={`Current points: ${sessionPoints} points`}>Points: {sessionPoints}</span>
+            <span className="score-text" aria-label={`Current points: ${sessionPoints} points`} tabIndex={0}>Points: {sessionPoints}</span>
           </div>
-          
           <div className="question-info2" tabIndex={0}>
-            <h3>{currentQ.type === 'hangman' ? 'Level' : 'Question'}</h3>
-            <p aria-label={`${currentQ.type === 'hangman' ? 'Level' : 'Question'} ${currentQuestion + 1} of ${questions.length}`}>
+            <h3 tabIndex={0}>{currentQ.type === 'hangman' ? 'Level' : 'Question'}</h3>
+            <p aria-label={`${currentQ.type === 'hangman' ? 'Level' : 'Question'} ${currentQuestion + 1} of ${questions.length}`} tabIndex={0}>
               {currentQuestion + 1}/{questions.length}
             </p>
           </div>
-
           <div className="lives-display" role="status" aria-live="polite" aria-label={`Lives remaining: ${lives} out of 3`} tabIndex={0}>
             {[...Array(3)].map((_, index) => (
               <span 
@@ -396,26 +387,23 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
         </section>
 
         <section className="question-container2" aria-labelledby="current-question-heading">
-          <h2 id="current-question-heading" className="sr-only">
+          <h2 id="current-question-heading" className="sr-only" tabIndex={0}>
             {currentQ.type === 'hangman' ? 'Word guessing game' : 'Multiple choice question'}
           </h2>
-          
           {currentQ.type === 'hangman' ? (
             <div className="hangman-game">
               {renderHangman()}
-              
-              <div className="word-display" role="group" aria-labelledby="word-progress" aria-describedby="hangman-instruction">
-                <div id="word-progress" className="sr-only">
+              <div className="word-display" role="group" aria-labelledby="word-progress" aria-describedby="hangman-instruction" tabIndex={0}>
+                <div id="word-progress" className="sr-only" tabIndex={0}>
                   Word progress: {getCurrentHangmanWord().split('').map(letter => 
                     guessedLetters.includes(letter) ? letter : 'blank'
                   ).join(' ')}
                 </div>
-                <div id="hangman-instruction" className="sr-only">
+                <div id="hangman-instruction" className="sr-only" tabIndex={0}>
                   Guess the letters to complete the word: {getCurrentHangmanWord()}
                 </div>
                 {renderWord()}
               </div>
-              
               <div className="keyboard" role="group" aria-label="Letter selection keyboard">
                 {alphabet.map((row, rowIndex) => (
                   <div key={rowIndex} className="keyboard-row">
@@ -423,11 +411,9 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
                       const isSelected = selectedLetters.includes(letter);
                       const isCorrect = getCurrentHangmanWord().includes(letter);
                       let ariaLabel = `Letter ${letter}`;
-                      
                       if (isSelected) {
                         ariaLabel += isCorrect ? ' - correct' : ' - incorrect';
                       }
-
                       return (
                         <button
                           key={letter}
@@ -451,7 +437,6 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
                   </div>
                 ))}
               </div>
-
               <button 
                 className="finish-btn" 
                 onClick={handleNext}
@@ -464,20 +449,15 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
             </div>
           ) : (
             <div className="multiple-choice-game">
-              <div className="question-header">
-                <h3 className="question-counter">Question {currentQuestion + 1}/{questions.length}</h3>
-              </div>
-
+              {/* Eliminado el contador de pregunta duplicado */}
               <div className="question-content">
-                <div className="question-text" id="current-question">
+                <div className="question-text" id="current-question" tabIndex={0}>
                   {currentQ.question}
                 </div>
-
                 <div className="answers-grid" role="radiogroup" aria-labelledby="current-question" aria-required="true">
                   {(currentQ.options || []).map((option, index) => {
                     let buttonClass = 'answer-option';
                     let ariaLabel = option;
-                    
                     if (showResult) {
                       if (index === currentQ.correctAnswer) {
                         buttonClass += ' correct';
@@ -490,7 +470,6 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
                       buttonClass += ' selected';
                       ariaLabel = `${option} - Selected`;
                     }
-
                     return (
                       <button
                         key={index}
@@ -512,7 +491,6 @@ const GrammarGame = ({ level, videoQuestions, videoTitle, onBack, onComplete, on
             </div>
           )}
         </section>
-
         <nav className="game-buttons" aria-label="Game navigation">
           <button 
             onClick={onBack} 
